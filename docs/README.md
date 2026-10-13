@@ -1,8 +1,10 @@
 # Snappik documentation
 
-Version: 0.1 · Updated: 13 October 2026 · Status: implementation planning baseline.
+Version: 0.2 · Updated: 13 October 2026 · Status: implementation planning baseline with agent execution guidance.
 
 Snappik is a photo-selection and delivery application for studios and their clients. These documents define a new product informed by a Fastpik audit; they do not describe an existing Snappik implementation or reproduce Fastpik's private architecture.
+
+**AI agents start with [the agent guide](agents/README.md).** Repository-wide instructions are in [AGENTS.md](../AGENTS.md). The [project state](agents/PROJECT_STATE.md) distinguishes implemented artifacts from planned application behavior; the [implementation guide](agents/IMPLEMENTATION_GUIDE.md) explains how to execute the backlog.
 
 ## Read in this order
 
@@ -21,6 +23,7 @@ Snappik is a photo-selection and delivery application for studios and their clie
 | [Traceability](TRACEABILITY.md) | Requirement → rule → work item → test mapping |
 | [Deployment](DEPLOYMENT.md) | Environments, operations and release runbook |
 | [Decisions](decisions/README.md) | Architectural decisions and unresolved choices |
+| [Agent documentation](agents/README.md) | Task startup, implementation, engineering, verification and handoff |
 
 ## Evidence and terminology
 
