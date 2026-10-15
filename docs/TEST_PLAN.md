@@ -12,6 +12,8 @@ Status: application acceptance remains planned; **no full acceptance scenario is
 
 Domain tests verify state rules. PostgreSQL integration tests verify actual constraints, locks, rollback and idempotency. Adapter contract tests verify bounded provider behavior. Browser E2E tests verify only meaningful complete user journeys and critical interaction states, not component implementation details.
 
+BL-004 [executed evidence](auth/BL-004-EVIDENCE.md): `npm run test:db` now runs 17 foundation checks plus 10 onboarding checks on isolated real PostgreSQL 18.4. The latter inject synthetic server sessions into the actual domain/Request handlers, without a production fixture login. They cover 8-way provisioning/setup, differing-tab conflicts, rollback/retry after audit failure, expiry while blocked on user lock, email/namespace separation, partial repair/expired and revoked trials, CSRF/body/field/tenant denial, safe returns, suspension, unconfigured/provider uncertainty and least-privilege grants. Production process smoke verifies fail-closed APIs and unavailable pages. Full T-001, full T-002 across later APIs and authenticated-browser T-003 are not passed.
+
 ## Acceptance matrix
 
 | Test | Scenario and required assertion | Requirements |

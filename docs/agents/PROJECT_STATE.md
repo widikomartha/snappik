@@ -1,23 +1,25 @@
 # Project state
 
-Snapshot: 15 October 2026 (Asia/Makassar), BL-003 implementation session. Starting clean local master / HEAD `1089964` (BL-005). User subsequently authorized a local BL-003 commit; this snapshot accompanies it (resolve SHA with git log). No push, publish, deployment, real-provider connection or paid provisioning. Verify actual Git/files each chat; local workspace is authoritative.
+Snapshot: 15 October 2026 (Asia/Makassar), BL-004 implementation session. Starting clean local master / HEAD `d1686b9` (BL-003). User subsequently authorized a local BL-004 commit; this snapshot accompanies it (resolve SHA with git log). No push, publish, deployment, real-provider connection or paid provisioning. Verify actual Git/files each chat; local workspace is authoritative.
 
 | Area | Current state | Evidence / limitation |
 |---|---|---|
-| Web / worker | Provider-independent TypeScript/Next.js foundation | [Root setup](../../README.md), [evidence](../foundation/BL-003-EVIDENCE.md); status/health only; compiled worker/dispatcher, no business routes/real handlers |
+| Web / worker | Foundation plus BL-004 setup/access pages and two owner handlers | `/api/v1/me`, `/api/v1/onboarding`, `/login`, `/recover`, `/onboarding`, `/app`; real auth unconfigured; worker handlers unchanged |
 | Runtime / package manager | Node 24.18.0 / npm 11.16.0, PowerShell 7.6.5, Windows x64 | Root package/lock, .node-version, exact install/ci executed; Next 16.4.1, React 19.3.1, TS 5.9.3, pg 8.23.1, tsx 4.23.15 |
 | Database | Initial app SQL 001 + lease expansion 002; real isolated PostgreSQL 18.4 verified | Composite scope keys, uniqueness, immutable history, migrations/checksums/compatibility, runtime grant template; no provider-owned auth schema or deployed role |
-| Tenant / reliability | Scoped repositories, membership/suspension, transaction/audit/idempotency, durable queue/leases/fencing/retries | 4 unit + 17 real PG tests Passed; principals and business effects explicitly synthetic; no auth provider/session revocation claim |
+| Tenant / reliability | Scoped repositories plus atomic onboarding; queue/leases/fencing unchanged | Final BL-004 check: 4 unit + 27 real-PG tests Passed (17 foundation + 10 onboarding); sessions/provider identities synthetic; no durable auth revocation claim |
 | Config / health / CI | Startup config, PG timeout/pool bounds, no-store live/ready, Windows workflow configured | Production web/compiled-worker/CLI smoke Passed; hosted CI Not run; replica capacity untested |
 | BL-003 acceptance | In progress, local foundation implemented/verified | T-002/004/017 foundation subsets only; operational/provider-schema portions gated by DEC-001/002/003; no adjacent backlog services implemented |
-| Auth | BL-001 In progress / DEC-001 open | [Candidate contract](../auth/SESSION_CONTRACT.md), [evidence](../auth/BL-001-EVIDENCE.md); real callback/email/MFA/durable revocation still pending; scaffold adapter returns no principal |
+| Auth / onboarding | BL-001/004 In progress / DEC-001 open | [BL-004 evidence](../auth/BL-004-EVIDENCE.md): atomic mapping/studio/membership/settings/single 168-hour, limit-3 trial; profile validation/idempotent completion, incomplete repair, no renewal, server membership scope. Runtime adapter returns 503; real callback/email/logout/recovery/durable revocation pending |
 | Drive / hosting / storage | BL-002 In progress / DEC-002/003 open | [ADR-005](../decisions/ADR-005-drive-hosting-feasibility.md), [evidence](../drive/BL-002-EVIDENCE.md); dedicated fixtures unavailable; resource-key/credential schema and live infrastructure still unresolved; scaffold fails unconfigured |
 | UX | BL-005 Done for design/prototype only | [Prototype](../../prototypes/bl005-ux/README.md), [evidence](../design/BL-005-EVIDENCE.md); no application integration; full T-006/T-016 not passed |
-| Product scope | Contracts unchanged | PRD/rules unchanged; API actual-health inventory and Database physical invariants clarified; onboarding/project/inventory/gallery/selection/operator services pending |
+| Product scope | PRD unchanged; setup contract details clarified | API/Database/Business Rules record reserved slugs, defaults, atomic repair and retry conflicts. No project/inventory/gallery/selection/operator service added |
 | Research / privacy | Private research preserved, unused by scaffold | Only synthetic accounts/records, no live tokens/photos/credentials logged or copied |
 | Deployment / recovery | Not connected/deployed | No production host/storage/auth selected; no backup restore, load or rolling release drill; beta embedded-PG package is development tooling only |
 
 ## Exact install, setup and verification commands
+
+BL-004 final verification: `npm run check` Passed (strict typecheck, 4 unit, 27 PostgreSQL 18.4 checks, web/compiled-worker build), `npm run test:smoke` Passed (actual production processes/migration CLI, fail-closed owner APIs, CSRF, safe return and unavailable pages), docs validator Passed (45 Markdown, 261 links, 2 JSON examples), diff/whitespace review Passed. Exact environment, corrected early failures and unexecuted/provider gaps: [BL-004 evidence](../auth/BL-004-EVIDENCE.md). No dependency install, production migration, browser-auth or provider connection was performed. Historical BL-003 command evidence below remains valid for that session; BL-004 expands its DB suite.
 
 Run from repository root on the declared Node/npm versions. Full command explanations: [root README](../../README.md). Local setup (database command stays in its terminal):
 
@@ -47,6 +49,6 @@ Existing spike/prototype commands remain independent: `npm --prefix spikes/bl001
 
 ## Active handoff and exact next action
 
-BL-003 active [handoff](handoff-2026-10-15-BL-003.md) supersedes BL-005 as the current workspace implementation snapshot. Local independent deliverable is ready for review; whole item remains In progress for operational/provider-schema gates. First action in the next new BL-003 chat: read that handoff, inspect current Git/manifests, and inspect DEC-001/002/003 closure evidence to determine whether approved provider schema and an authorized target PostgreSQL/hosting topology now exist. If gates remain open, preserve the verified local foundation and report the exact missing decision; do not fabricate a provider migration or start BL-004/006/007. No live provider authorization is implied by this handoff.
+BL-004 active [handoff](handoff-2026-10-15-BL-004.md) supersedes BL-003 as the current implementation snapshot. First action in a new BL-004 chat: read that handoff and inspect current Git plus DEC-001/ADR-004 closure evidence for an approved provider/session contract and explicitly authorized dedicated test configuration. If absent, keep BL-004 In progress; no synthetic adapter closes the gate. The previous [BL-003 handoff](handoff-2026-10-15-BL-003.md) remains valid for its separate operational/provider-schema gaps.
 
 BL-001/002 remain separately active in [auth handoff](handoff-2026-10-15-BL-001.md) and [Drive handoff](handoff-2026-10-15-BL-002.md). BL-005 [design handoff](handoff-2026-10-15-BL-005.md) is completed and remains valid for later UI integration. Open provider gates require their own authorized evidence; BL-003 did not close them. Other backlog IDs remain outside this chat.

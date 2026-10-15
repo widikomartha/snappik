@@ -1,6 +1,6 @@
 # Snappik local foundation
 
-BL-003 provider-independent foundation. The application currently exposes only a status page and health routes. Authentication returns no principal; Drive and all job handlers fail explicitly as unconfigured. Product flows remain in their own backlog items. Start with [agent instructions](AGENTS.md) and [project state](docs/agents/PROJECT_STATE.md).
+BL-003 provider-independent foundation plus a BL-004 onboarding subset. `/api/v1/me` and `/api/v1/onboarding` now delegate to atomic PostgreSQL provisioning/setup; `/login`, `/recover`, `/onboarding` and `/app` show honest unavailable states until auth is configured. DEC-001 remains open: the auth adapter fails closed with 503, and there is no synthetic login switch. No real login/logout/recovery is installed. Drive and all job handlers remain unconfigured. Start with [agent instructions](AGENTS.md), [project state](docs/agents/PROJECT_STATE.md) and [BL-004 evidence](docs/auth/BL-004-EVIDENCE.md).
 
 ## Requirements and install
 
@@ -29,7 +29,7 @@ In a third terminal:
 npm run worker
 ```
 
-Next.js reads `.env.local`; CLI/worker scripts explicitly load that file. `DATABASE_URL` is runtime-only, `MIGRATION_DATABASE_URL` is the reviewed DDL connection. They share the local synthetic cluster owner **only for local setup**. Do not use an unknown database for experiments. No production role, provider, storage or secret configuration is selected. A separate pre-existing non-owner foundation role can receive [reviewed grants](src/db/runtime-grants.sql); see [security boundary](docs/SECURITY.md).
+Next.js reads `.env.local`; CLI/worker scripts explicitly load that file. `DATABASE_URL` is runtime-only, `MIGRATION_DATABASE_URL` is the reviewed DDL connection. They share the local synthetic cluster owner **only for local setup**. Do not use an unknown database for experiments. No production role, provider, storage or secret configuration is selected. A separate pre-existing non-owner service role can receive [foundation grants](src/db/runtime-grants.sql) plus [onboarding grants](src/db/onboarding-grants.sql); see [security boundary](docs/SECURITY.md). These templates are tested, not automatically applied or a deployed role.
 
 ## Verification and build
 
@@ -58,6 +58,6 @@ After building, `npm start` runs the web artifact; `npm run worker:start` runs `
 
 ## Migration and compatibility policy
 
-No down/reset command exists. Numbered SQL is checksum-checked, serialized with a database advisory lock and committed with its journal entry. Failed DDL rolls back. Never edit a migration after it has been applied to a persistent/shared database. These initial files are uncommitted initial scaffold migrations, tested only on disposable synthetic clusters.
+No down/reset command exists. Numbered SQL is checksum-checked, serialized with a database advisory lock and committed with its journal entry. Failed DDL rolls back. Never edit a migration after it has been applied to a persistent/shared database. BL-004 reuses the committed 001/002 schema without changing migration history.
 
 Expand with nullable/defaulted fields, backfill, validate, then remove fields only after readers/writers are upgraded. `schema_compatibility.minimum_runtime` is the protocol floor. Runtime level 2 requires migration 002; it accepts future expansions that preserve that floor, and rejects an incompatible higher floor. Migration 002 introduces lease fencing; **never roll workers back to a pre-fencing implementation**. Application rollback keeps the schema and uses a compatible level-2 artifact. There is no earlier production artifact to roll back to. A tested additive SQL reader probe is not a hosted rolling-release or backup-restore drill. See [Database](docs/DATABASE.md) and [Deployment](docs/DEPLOYMENT.md).

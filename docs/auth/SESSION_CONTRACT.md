@@ -1,6 +1,6 @@
 # Candidate identity and server session contract
 
-Date: 15 October 2026. DEC-001 / BL-001. Candidate for Better Auth 1.7.9; only [executed local evidence](BL-001-EVIDENCE.md) is verified. No application routes/durable auth schema exist. [ADR-004](../decisions/ADR-004-auth-session-feasibility.md) owns comparison, sources and gates.
+Date: 15 October 2026. DEC-001 / BL-001. Candidate for Better Auth 1.7.9; [BL-001 evidence](BL-001-EVIDENCE.md) covers the library spike. BL-004 [app-side subset](BL-004-EVIDENCE.md) adds provisioning, setup and protected owner handlers; no authoritative provider adapter or durable auth schema exists. [ADR-004](../decisions/ADR-004-auth-session-feasibility.md) owns comparison, sources and gates.
 
 ## Verified identity boundary
 
@@ -69,4 +69,4 @@ Fail production startup on missing/invalid config. Rehearse key rotation, old-ke
 
 Production needs shared durable login/reset/MFA rate limits; memory limits cannot protect replicas. Candidate pilot limits: login 5/min address-digest+IP and 50/hour address-digest; reset 3/hour address-digest and 10/hour IP; MFA 5/min challenge plus account lockout. HMAC address digests use separate server rate-limit key. No raw addresses/IPs in evidence logs. Generic errors/Retry-After and resource behavior need testing; these defaults claim no attack resistance.
 
-No app env file, migration, custom password endpoint, onboarding or deployed adapter exists from this contract. Hosting/provider/hash-resource review and authorized smoke tests remain DEC-001 gates.
+No provider migration, custom password endpoint or deployed auth adapter exists. BL-004 implements app-side onboarding with synthetic server-adapter tests only; it does not close this contract's provider/revocation/logout/recovery gates. Hosting/provider/hash-resource review and authorized smoke tests remain DEC-001 gates.

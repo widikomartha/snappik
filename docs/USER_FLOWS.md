@@ -8,6 +8,8 @@ Read [Business rules](BUSINESS_RULES.md) for exact validation. Paths below are S
 
 ## Owner: first usable project
 
+BL-004 local subset: `/login` retains only a sanitized internal `/app` return path and shows auth unavailable; `/recover` explains that recovery awaits provider configuration. Protected `/app` and `/onboarding` show recoverable service states without data when auth is unavailable. With a future authoritative adapter, missing/expired sessions return pages to login, unverified email requires verification, suspended owners see restricted status, and incomplete setup shows a form seeded with known profile/settings. The form preserves input during retry/401/503, offers reauthentication in a new tab after expiry and navigates to the sanitized destination only after canonical success. Actual provider login/logout/reset and an authenticated browser walkthrough remain unverified; the form is not exposed via a synthetic production login.
+
 1. Visitor opens `/`, reads the product/help and selects Sign up.
 2. Approved auth provider establishes identity; callback validates its return destination against an internal allowlist.
 3. Server idempotently provisions studio, membership, settings and trial. `/onboarding` collects studio display name/slug.

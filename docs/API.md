@@ -2,7 +2,7 @@
 
 Status: baseline HTTP contract for implementation; not an existing endpoint inventory. Prefix `/api/v1`. JSON UTF-8 unless explicitly CSV/binary. Internal IDs are UUIDs. Dates are RFC3339 UTC. Unknown fields are rejected on mutations.
 
-BL-003 inventory: only `GET /health/live` (200 `{status:"live"}`) and `GET /health/ready` (200 `{status:"ready"}` or 503 `{status:"unavailable"}`) exist outside the business prefix. Both are no-store and disclose no dependency details. Readiness checks database/schema compatibility, not auth/Drive/feature availability. All owner/client/operator business routes below remain contracts, not implemented APIs. No test-only authenticated HTTP path was added. [Foundation evidence](foundation/BL-003-EVIDENCE.md) maps the repository/transaction subset to T-002/T-004/T-017.
+Implemented inventory: `GET /health/live` (200 `{status:"live"}`), `GET /health/ready` (200 `{status:"ready"}` or 503 `{status:"unavailable"}`), plus BL-004 `GET /api/v1/me` and `POST /api/v1/onboarding`. Health checks schema/DB, not feature readiness. Owner routes return 503 while the auth adapter is unconfigured; injected synthetic server adapters exercise their PostgreSQL behavior only in Node tests. No test login/HTTP principal override exists. All other business routes below remain contracts. See [BL-004 evidence](auth/BL-004-EVIDENCE.md).
 
 ## Shared conventions
 
@@ -42,6 +42,14 @@ BL-003 inventory: only `GET /health/live` (200 `{status:"live"}`) and `GET /heal
 | GET `/jobs/:id` | Tenant-owned sanitized state, progress and safe error code | OBS |
 
 Auth login/logout/recovery/callback endpoints remain library-delegated, outside the business prefix. DEC-001 is open; the Better Auth candidate is specified below and in the [session contract](auth/SESSION_CONTRACT.md). Do not add custom password endpoints. Operator bootstrap and user invitation APIs are not public MVP endpoints.
+
+### BL-004 implemented setup semantics
+
+`GET /me` is read-only. An unknown verified identity returns `user:null,studio:null,settings:null,entitlement:null,setup_status:"setup_required"`. Existing data uses explicit app user/studio IDs, studio name/slug/status/revision, settings locale/timezone/revision/defaults_schema_version and entitlement status/project_limit/ends_at. Setup status is `setup_required`, `incomplete`, `ready` or `suspended`. Suspended responses expose only user ID, studio ID/status and null settings/entitlement. Provider identity/session/account data is excluded.
+
+`POST /onboarding` requires exact configured Origin and JSON, bounds the body to 8192 bytes, and rejects unknown fields (including studio/user/email/role overrides). It atomically provisions identity, studio, membership, settings, trial and completes profile/setup audit. Callback integration may call `provisionOwner` first, leaving `setup_required`. No callback is wired until DEC-001 closes. Success is 201 for first profile completion and 200 for an identical retry. Once active, different input is 409 `SETUP_CONFLICT`, without overwriting saved values; later profile/settings edits belong to their revisioned routes. Global slug collision is 409 `SLUG_TAKEN`. Validation is 400 `INVALID_INPUT` with optional field code; unverified email is 403 `EMAIL_VERIFICATION_REQUIRED`; suspended/cross-origin request is 403 `FORBIDDEN`; missing/expired session is JSON 401 `AUTH_REQUIRED`; provider/DB uncertainty is 503 `TEMPORARILY_UNAVAILABLE` with Retry-After 5. Owner responses are no-store, no-referrer and never redirect APIs to HTML.
+
+Initial settings: locale `id`, timezone `Asia/Makassar`, defaults_schema_version 1. Defaults snapshot: detect_subfolders true, notes_enabled true, layout grid, main enabled/quota 20/expiry null, download disabled/expiry null. Completing setup applies the validated locale/timezone, increments profile/settings revisions once, and preserves defaults on retries/repairs. No project, download or quota-enforcement service is introduced here.
 
 Example creation request:
 

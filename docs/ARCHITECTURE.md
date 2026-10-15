@@ -1,12 +1,12 @@
 # Architecture
 
-Status: target design with a verified provider-independent BL-003 local foundation ([setup](../README.md), [evidence](foundation/BL-003-EVIDENCE.md)). Only status/health web routes, scoped persistence and queue infrastructure exist; product routes/handlers remain pending. BL-001 adds an isolated synthetic [auth spike](../spikes/bl001-auth/README.md); BL-002 adds an offline [Drive spike](../spikes/bl002-drive/README.md). Related: [ADR-001](decisions/ADR-001-modular-monolith.md), [Database](DATABASE.md), [API](API.md).
+Status: target design with a verified provider-independent BL-003 foundation and BL-004 [app-side onboarding subset](auth/BL-004-EVIDENCE.md). Health, `/api/v1/me`, `/api/v1/onboarding` and setup/access pages exist; auth remains unconfigured and owner handlers fail closed. No provider/session schema was guessed. Domain and HTTP code live under modules/onboarding; Next-specific navigation lives under app/_lib to keep the compiled worker independent of Next browser/server routing imports. BL-001/002 spikes remain isolated. Related: [ADR-001](decisions/ADR-001-modular-monolith.md), [Database](DATABASE.md), [API](API.md).
 
 ## Baseline stack and unresolved providers
 
 | Concern | Baseline | Status |
 |---|---|---|
-| Web and API | TypeScript, Next.js; same-origin browser/API deployment | Local Next 16.4.1 / React 19.3.1 / TS 5.9.3; Node 24.18.0 / npm 11.16.0 pinned and built; business endpoints pending |
+| Web and API | TypeScript, Next.js; same-origin browser/API deployment | Local Next 16.4.1 / React 19.3.1 / TS 5.9.3; Node 24.18.0 / npm 11.16.0 pinned; BL-004 me/onboarding routes built, other business endpoints pending |
 | Persistence | PostgreSQL with explicit migrations and transactions | Initial app schema/transactions verified on isolated PostgreSQL 18.4; managed host and provider-owned auth schema undecided |
 | Authentication | Conditional Better Auth/PostgreSQL server-session candidate | DEC-001 open; [ADR-004](decisions/ADR-004-auth-session-feasibility.md) and [candidate contract](auth/SESSION_CONTRACT.md); synthetic evidence only |
 | Source inventory | Google Drive adapter using supported APIs | DEC-002 open: [bounded candidate contract](drive/ADAPTER_CONTRACT.md), 29 synthetic checks; authorized folder/API evidence pending |

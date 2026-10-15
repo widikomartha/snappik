@@ -15,6 +15,8 @@ Status: Snappik baseline. These rules are design decisions, not assertions about
 
 Vendor slug: lowercase ASCII letters, digits and hyphens, 3–50 characters, globally unique and not a reserved application path. Display name: 1–100 characters. Slug is branding, not an authorization key. Gallery URL is `/g/{publicToken}` and survives display-name/slug changes.
 
+BL-004 validation detail: trim outer name whitespace, count Unicode code points, reject control/format characters. Slugs are validated as supplied, without silent lowercasing. Reserved names: app, api, auth, login, logout, register, recover, onboarding, ops, admin, g, health, help, support, privacy, terms, settings, account, projects, status, www, static, assets, public, _next, favicon, robots, sitemap. Locale is id/en; timezone is UTC or a canonical zone supported by the pinned Node runtime. Initial profile completion is write-once via onboarding: identical retry recovers success, different input conflicts rather than overwriting another tab. Later edits use their distinct revisioned contracts. Repair missing settings/trial without replacing existing rows; a missing trial is anchored to the original studio provisioned_at, including when already expired. An expired trial does not prevent finishing initial identity setup; it still forbids project business writes under BR-ENT-003.
+
 ## Project and source rules
 
 | ID | Rule |

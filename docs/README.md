@@ -1,6 +1,6 @@
 # Snappik documentation
 
-Version: 0.3 · Updated: 15 October 2026 · Status: local web/worker/PostgreSQL foundation plus feasibility spikes and UX prototype; provider/product integration pending.
+Version: 0.3 · Updated: 15 October 2026 · Status: local web/worker/PostgreSQL foundation, app-side onboarding subset, feasibility spikes and UX prototype; provider integration pending.
 
 Snappik is a photo-selection and delivery application for studios and their clients. These documents define a new product informed by a Fastpik audit; they do not describe an existing Snappik implementation or reproduce Fastpik's private architecture.
 
@@ -54,6 +54,8 @@ MVP includes one owner per studio, account-free galleries, one main selection se
 Baseline technical shape: TypeScript web application, Next.js presentation/API layer, PostgreSQL persistence, private object storage for derived images, and a worker from the same codebase. BL-003 provides [local setup](../README.md), pinned framework/lockfile, initial schema/scoped repositories, queue/audit/idempotency, CI setup and [actual PostgreSQL evidence](foundation/BL-003-EVIDENCE.md). Auth provider, Drive access method and hosting remain open through decision gates; no live credentials/provider integration is installed.
 
 Executed feasibility subsets: [BL-001 auth](auth/BL-001-EVIDENCE.md) and [BL-002 Drive/hosting](drive/BL-002-EVIDENCE.md). These isolated spikes do not scaffold the application or close their provider gates.
+
+BL-004 [onboarding evidence](auth/BL-004-EVIDENCE.md) and [active handoff](agents/handoff-2026-10-15-BL-004.md) record implemented PostgreSQL provisioning/setup, fail-closed owner APIs and setup/access pages. Synthetic server sessions verify only the app-side subset; real login/logout/recovery remain gated by DEC-001.
 
 Completed design/prototype deliverable: [BL-005 wireframes](../prototypes/bl005-ux/README.md), [tokens/components/states](design/BL-005-UX.md), [browser review evidence](design/BL-005-EVIDENCE.md). This separate, synthetic, memory-only prototype does not implement application routes, server authorization or persistence and does not pass full T-006/T-016.
 

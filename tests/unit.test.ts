@@ -23,6 +23,6 @@ test('retry schedule is bounded, honors Retry-After and rejects invalid attempts
   assert.throws(() => retryDelay(6)); assert.throws(() => retryDelay(1,()=>1));
 });
 test('unconfigured adapters cannot invent authenticated or Drive-backed success',async () => {
-  assert.equal(await auth.resolveOwner(new Request('http://localhost')),null);
+  await assert.rejects(auth.resolveSession(new Request('http://localhost')),/PROVIDER_NOT_CONFIGURED/);
   await assert.rejects(drive.scan({studioId:'synthetic',projectId:'synthetic'},new AbortController().signal),/PROVIDER_NOT_CONFIGURED/);
 });

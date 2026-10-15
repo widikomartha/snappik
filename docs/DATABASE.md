@@ -35,6 +35,10 @@ erDiagram
 
 Provision identity mapping idempotently, then lock the user mapping and create its studio/membership/settings/trial in one transaction. Unique memberships prevent concurrent provisioning from creating two studios. Existing provider identity can have several attempts but only one successful provision. Email/Google account linking requires verified provider support; do not join on unverified email alone.
 
+BL-004 implements this app-side transaction in [service](../src/modules/onboarding/service.ts) against unchanged 001/002 schema. Unique-key insert/reload → user row lock → membership/studio lock → missing settings/trial insert → optional first profile completion/audit → expiry recheck → commit. Provider requests happen before the transaction. Trial starts_at is selected directly from studio.provisioned_at inside PostgreSQL, ends_at is exactly +168 hours, project_limit 3, source_ref initial-trial. Avoid a JavaScript Date round-trip that truncates PostgreSQL microseconds. Existing/revoked trials and defaults are never replaced. A new studio captures clock_timestamp after obtaining the identity lock. A failed transaction rolls back mapping and every dependent row; no partial acknowledged setup. Provider session security/revocation tables remain gated, so only synthetic server sessions currently reach these transactions.
+
+[Onboarding grants](../src/db/onboarding-grants.sql) extend the trusted service role with identity/studio/membership/settings/trial inserts and profile/settings field updates. Tested with a non-owner role; no trial update/delete, membership reassignment, operator self-grant or DDL. This is service authorization with scoped repositories, not RLS. No new provider-owned schema or production migration was created/applied.
+
 ## Projects and inventory
 
 | Table | Fields | Keys / rules |

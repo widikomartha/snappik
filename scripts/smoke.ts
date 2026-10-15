@@ -38,6 +38,15 @@ try {
   assert.equal(readiness.headers.get('cache-control'),'no-store');
   const home=await fetch(origin); assert.ok((await home.text()).includes('belum dikonfigurasi'));
   assert.equal((await fetch(`${origin}/api/v1/projects`)).status,404);
+  const me=await fetch(`${origin}/api/v1/me`,{headers:{'x-studio-id':'synthetic-forged','x-user-role':'owner',cookie:'gallery=synthetic'}});
+  assert.equal(me.status,503); assert.equal(me.headers.get('cache-control'),'no-store');
+  assert.equal((await me.json()).error.code,'TEMPORARILY_UNAVAILABLE');
+  const setup=await fetch(`${origin}/api/v1/onboarding`,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({name:'Synthetic',slug:'synthetic-studio',locale:'id',timezone:'UTC'})});
+  assert.equal(setup.status,503);
+  assert.equal((await fetch(`${origin}/api/v1/onboarding`,{method:'POST',headers:{Origin:'https://evil.invalid','Content-Type':'application/json'},body:'{}'})).status,403);
+  const login=await (await fetch(`${origin}/login?return_to=${encodeURIComponent('https://evil.invalid/app')}`)).text();
+  assert.ok(login.includes('Tujuan setelah masuk:')); assert.ok(!login.includes('<code>https://evil.invalid'));
+  for(const path of ['/app','/onboarding','/recover']) assert.equal((await fetch(`${origin}${path}`)).status,200);
   worker=launch(['dist/worker/main.js']);
   for (let i=0;i<100 && !worker.output().includes('worker_started');i++) {
     if (worker.child.exitCode !== null) throw new Error('WORKER_START_FAILED');
@@ -51,7 +60,7 @@ try {
   assert.ok(worker.output().includes('worker_started'));
   const db=new pg.Pool({connectionString:instance.connectionString});
   try { assert.equal((await db.query('SELECT count(*)::int AS n FROM jobs')).rows[0].n,0); } finally { await db.end(); }
-  console.log('Passed: production web/compiled worker, live, ready 503 -> CLI migration -> 200, no-store, unconfigured providers, worker restart.');
+  console.log('Passed: production web/compiled worker, ready/migration, owner APIs fail closed, CSRF, safe login return, unavailable pages, worker restart. No real auth session.');
 } finally {
   if (worker) await stop(worker.child);
   if (web) await stop(web.child);

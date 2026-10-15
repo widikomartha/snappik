@@ -1,6 +1,6 @@
 # Requirements traceability
 
-Status: application requirements remain **not implemented / full acceptance not tested**. BL-001 has a verified synthetic auth subset documented in [evidence](auth/BL-001-EVIDENCE.md); this does not pass full T-001 or T-015. BL-002's [evidence](drive/BL-002-EVIDENCE.md) maps a 29-check offline feasibility subset to T-005/T-013/T-017/T-022 implications; none is full acceptance. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.
+Status: full application acceptance remains **incomplete**. BL-001 has a verified synthetic auth subset documented in [evidence](auth/BL-001-EVIDENCE.md); this does not pass full T-001 or T-015. BL-002's [evidence](drive/BL-002-EVIDENCE.md) maps a 29-check offline feasibility subset to T-005/T-013/T-017/T-022 implications; none is full acceptance. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.
 
 BL-005 is Done for the design/prototype deliverable: [UX specification](design/BL-005-UX.md) and [evidence](design/BL-005-EVIDENCE.md) map REQ-GAL-001/REQ-UX-001 to design-relevant T-006/T-016 checks. Synthetic in-memory journeys, viewport measurements and wireframes do not change the full application acceptance status of those rows.
 
@@ -30,3 +30,5 @@ BL-003 [foundation evidence](foundation/BL-003-EVIDENCE.md) verifies REQ-TEN-001
 | REQ-RET-001 | BR-PROJ-004, BR-RET-001, BR-RET-002 | BL-015, BL-017 | T-019, T-020 |
 
 Deferred `FUT-*` requirements map to BL-101 through BL-105 in [Backlog](BACKLOG.md); they do not count toward MVP coverage. Assign detailed tests when their business rules and API/schema contracts are approved.
+
+BL-004 [evidence](auth/BL-004-EVIDENCE.md): REQ-AUTH-001 / BR-TEN-001 / BR-ONB-001 → T-001 expiry, safe return and protected-handler subset only; REQ-TEN-001 / BR-TEN-001 → T-002 membership scoping and forged input denial on implemented handlers, plus foundation repository/FKs; REQ-ONB-001 / BR-ONB-001 / BR-ENT-001 → T-003 PostgreSQL repeat/concurrency/failure/retry/no-renewal subset. No full named acceptance passed: provider proof, durable logout/recovery, future project HTTP matrix and authenticated browser retry remain open. No project creation/quota enforcement or operator endpoint was added.
