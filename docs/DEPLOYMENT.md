@@ -2,6 +2,16 @@
 
 Status: provider-neutral runbook. Hosting/auth/storage remain gated by DEC-001/003. BL-001 has an isolated synthetic auth spike only; no live infrastructure, environment files or deployment scripts exist. The [candidate session configuration](auth/SESSION_CONTRACT.md) adds BETTER_AUTH_URL/SECRET(S), AUTH_INSTANCE_ID, restricted AUTH_DATABASE_URL and AUTH_MAIL_CONFIG_REF; these do not select hosting or authorize provider connection.
 
+BL-002 adds an offline [Drive/streaming spike](../spikes/bl002-drive/README.md), [candidate contract](drive/ADAPTER_CONTRACT.md) and [ADR-005](decisions/ADR-005-drive-hosting-feasibility.md). Its conditional evaluation of Render Singapore web/worker/PostgreSQL plus private object storage does not select a provider. DEC-002/003 remain open; no infrastructure or provider configuration is present.
+
+## BL-002 hosting feasibility constraints
+
+ADR-005 records dated official sources, indicative price floor and unknowns. Required next evidence: exact region/plan/budget, >=50 MiB binary proxy path, idle/total timeouts, slow/client-cancel behavior, scratch high-water/admission, actual worker restart/lease fencing with PostgreSQL, object anonymous-denial, and restore/revocation reconciliation. Do not deploy an assumed streaming exception or treat dynamic pricing search extracts as a purchase quote.
+
+Candidate production transfer path uses <=50 MiB ephemeral scratch per admitted original and independent web/worker process limits. Begin evaluation with at most two active transfers per process and shared credential limits; use measured decoder memory before selecting worker size. A 120-second synthetic upstream timeout is not a validated hosting limit. Postgres pools must fit all replicas plus migration/ops reserve. Region placement hints do not prove residency; processor/backup location review remains open.
+
+Paid-host PITR in the evaluated candidate has a shorter window than the baseline 30-day backup retention. Budget a separate daily encrypted logical-export path, retention/access controls and isolated restore drill. No PostgreSQL persistence, backup RPO/RTO, decoder capacity or PRD pilot load was measured by the local spike.
+
 ## Environments and release units
 
 Local development uses synthetic data and mocked provider boundaries unless explicitly connecting a test account. Staging uses isolated test credentials, database and private object bucket. Production uses separate secrets/accounts with least privilege. Never seed real Fastpik account credentials or audited client photos into public fixtures.

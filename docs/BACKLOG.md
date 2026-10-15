@@ -1,6 +1,6 @@
 # Implementation backlog
 
-Status: **BL-001 In progress** (bounded synthetic spike verified; real-provider/deployment and durable-session evidence pending). All other items **Todo**. Priorities: P0 foundation/release blocker, P1 core capability, P2 later enhancement. Sizes S/M/L are relative scope, not delivery estimates. Do not interpret this plan as completed application work.
+Status: **BL-001 In progress** (bounded synthetic spike verified; real-provider/deployment and durable-session evidence pending). **BL-002 In progress** (29 offline checks Passed; dedicated Drive/provider/hosting evidence Blocked, DEC-002/003 open). All other items **Todo**. Priorities: P0 foundation/release blocker, P1 core capability, P2 later enhancement. Sizes S/M/L are relative scope, not delivery estimates. Do not interpret this plan as completed application work.
 
 ## Milestones
 
@@ -18,7 +18,7 @@ Status: **BL-001 In progress** (bounded synthetic spike verified; real-provider/
 | ID | Priority / size | Work | Dependencies | Acceptance / done evidence |
 |---|---|---|---|---|
 | BL-001 | P0 / M | **In progress** — conditional Better Auth recommendation; identity/session contract and bounded spike | None | [ADR-004](decisions/ADR-004-auth-session-feasibility.md), [contract](auth/SESSION_CONTRACT.md), [evidence](auth/BL-001-EVIDENCE.md): 18/18 local synthetic checks Passed; T-001/T-015 full acceptance pending; DEC-001 open |
-| BL-002 | P0 / M | Prove Drive access and hosting/streaming/worker feasibility; close DEC-002/003 | None | Dedicated folder test with pagination, nesting, revoked access and quota behavior; no undocumented scraping |
+| BL-002 | P0 / M | **In progress** — bounded Drive/streaming contract, synthetic spike and conditional hosting assessment | None | [ADR-005](decisions/ADR-005-drive-hosting-feasibility.md), [contract](drive/ADAPTER_CONTRACT.md), [evidence](drive/BL-002-EVIDENCE.md): 29/29 offline checks Passed. Dedicated public/private/shared folders, real keys/scopes/revocation/quotas and hosted proxy/worker/DB/storage evidence pending; DEC-002/003 open, not Done |
 | BL-003 | P0 / L | Scaffold web/worker, migrations, scoped repository interfaces, audit/idempotency/jobs and CI | BL-001, BL-002 | Clean setup on empty database; migration/rollback strategy; transaction and lease tests; T-002/004/017 foundations |
 | BL-004 | P0 / M | Auth integration, tenant membership, idempotent provisioning and setup UI | BL-003 | Repeat/concurrent setup yields one studio/trial/defaults; protected access tests T-001/002/003 pass |
 | BL-005 | P1 / M | Wireframes, design tokens and accessible shared controls | None | Creation/detail/gallery/review/error flows reviewed with synthetic data; no future-feature dead buttons |
@@ -55,4 +55,4 @@ Each issue should contain: ID/title, user outcome, requirement IDs, scope/exclus
 
 ## Recommended next execution
 
-Start BL-001, BL-002 and BL-005 to settle feasibility and workflows. Then BL-003/004/006 establish a usable studio-to-project slice. Integrate gallery/selection/confirmation before adding paid plans or optional automation. Do not deploy or connect paid services as part of documentation creation.
+Resume BL-001/002 through their evidence/handoffs when authorized test environments exist; BL-005 can proceed independently in its own scoped chat. Then BL-003/004/006 establish a usable studio-to-project slice. Integrate gallery/selection/confirmation before adding paid plans or optional automation. Do not deploy or connect paid services as part of documentation creation.

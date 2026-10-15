@@ -1,6 +1,6 @@
 # Test and release plan
 
-Status: application acceptance remains planned; **no full acceptance scenario is verified**. BL-001 executed a bounded synthetic subset, detailed below. Fastpik live tests are research, not evidence that Snappik passes. Use deterministic clocks, synthetic Drive adapters and at least two tenants. Selected provider smoke tests run only against dedicated test accounts/folders.
+Status: application acceptance remains planned; **no full acceptance scenario is verified**. BL-001 and BL-002 executed bounded synthetic subsets, detailed below. Fastpik live tests are research, not evidence that Snappik passes. Use deterministic clocks, synthetic Drive adapters and at least two tenants. Selected provider smoke tests run only against dedicated test accounts/folders.
 
 ## Fixtures and levels
 
@@ -64,3 +64,9 @@ Run `npm --prefix spikes/bl001-auth test` from repository root. Actual Better Au
 T-001 subset covers credential login, callback/return/state/PKCE, expiry, logout/error and recovery. T-015 subset covers permission plus current-session TOTP, including OAuth bypass of the library's credential challenge. Neither full acceptance test is Passed. No browser/Next.js server, real provider/delivery, PostgreSQL constraints/races or operator business operations were exercised.
 
 For authorized integration, replay each synthetic scenario through the actual HTTPS callback and Next.js protected bookmark/API; use isolated verified accounts plus a real test authenticator and email inbox. Assert wrong issuer/audience/signature/nonce, expired/consumed code/state and denial on copied cookie after logout, restart and a second web process. With separate PostgreSQL connections/barriers, assert mapping/account uniqueness, competing link/reset and logout versus authorization. Preserve acknowledged records and fresh-reauth/MFA on recovery. Record build/config/schema and provider/environment, with sanitized results. Missing authorization/config remains Blocked, not Passed by the synthetic fixture.
+
+## BL-002 executable feasibility subset — 15 October 2026
+
+Run `npm --prefix spikes/bl002-drive test` from repository root (Node built-ins only, no install). 29/29 offline checks Passed: identity/path/key descriptors, pagination/skip counters, 5,000 images, depth 10, 50 MiB inclusive limits and over-limit failure, incomplete/revoked scans, bounded retries/deadlines and byte-counted temporary staging with injected policy checks. [Evidence](drive/BL-002-EVIDENCE.md) records commands/environment, sizing hypotheses, exact authorized-provider protocol and unsupported modes; [contract](drive/ADAPTER_CONTRACT.md) separates local seams from production obligations.
+
+T-005/T-013/T-017/T-022 remain unverified in full. No real Drive folder/account, OAuth/API key, web proxy, worker, PostgreSQL lease/publication race, production decoder, private bucket, backup restore, browser or PRD pilot load was tested. Dedicated folders are unavailable by user confirmation. DEC-002/003 stay open; do not turn synthetic rate errors or a local disk sample into provider/load acceptance.

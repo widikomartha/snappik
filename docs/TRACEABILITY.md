@@ -1,6 +1,6 @@
 # Requirements traceability
 
-Status: application requirements remain **not implemented / full acceptance not tested**. BL-001 has a verified synthetic auth subset documented in [evidence](auth/BL-001-EVIDENCE.md); this does not pass full T-001 or T-015. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.
+Status: application requirements remain **not implemented / full acceptance not tested**. BL-001 has a verified synthetic auth subset documented in [evidence](auth/BL-001-EVIDENCE.md); this does not pass full T-001 or T-015. BL-002's [evidence](drive/BL-002-EVIDENCE.md) maps a 29-check offline feasibility subset to T-005/T-013/T-017/T-022 implications; none is full acceptance. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.
 
 | Requirement | Business rule(s) | Backlog | Acceptance tests |
 |---|---|---|---|
