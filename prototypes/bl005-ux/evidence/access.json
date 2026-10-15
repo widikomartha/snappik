@@ -1,0 +1,98 @@
+[
+  {
+    "locale": "id",
+    "value": "expired",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Akses pilihan kedaluwarsa"
+  },
+  {
+    "locale": "id",
+    "value": "revoked",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Galeri tidak tersedia"
+  },
+  {
+    "locale": "id",
+    "value": "session",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Sesi berakhir"
+  },
+  {
+    "locale": "id",
+    "value": "ownerSession",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Sesi pemilik berakhir"
+  },
+  {
+    "locale": "id",
+    "value": "service",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Layanan sementara tidak tersedia"
+  },
+  {
+    "locale": "id",
+    "value": "suspended",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Akses tidak tersedia"
+  },
+  {
+    "locale": "en",
+    "value": "expired",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Selection access expired"
+  },
+  {
+    "locale": "en",
+    "value": "revoked",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Gallery unavailable"
+  },
+  {
+    "locale": "en",
+    "value": "session",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Session ended"
+  },
+  {
+    "locale": "en",
+    "value": "ownerSession",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Owner session ended"
+  },
+  {
+    "locale": "en",
+    "value": "service",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Service temporarily unavailable"
+  },
+  {
+    "locale": "en",
+    "value": "suspended",
+    "images": 0,
+    "overflow": false,
+    "photoIds": 0,
+    "title": "Access unavailable"
+  }
+]

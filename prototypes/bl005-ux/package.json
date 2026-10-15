@@ -1,0 +1,13 @@
+{
+  "name": "snappik-bl005-ux-prototype",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-only synthetic BL-005 wireframes; no application or provider integration",
+  "engines": { "node": ">=24.18.0 <25", "npm": "11.16.0" },
+  "scripts": {
+    "preview": "node serve.mjs",
+    "check": "node --check app.mjs && node --check model.mjs && node --check strings.mjs && node --check serve.mjs && node --check workbench.mjs",
+    "test": "node --test prototype.test.mjs"
+  }
+}

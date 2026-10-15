@@ -1,6 +1,6 @@
 # Product and interface design
 
-Status: baseline interaction specification; no approved visual mockups yet. This defines Snappik's own design language. Do not copy Fastpik logos, artwork, copy or screenshots into product UI.
+Status: baseline interaction specification with reviewed local BL-005 wireframes. [Prototype and component specification](design/BL-005-UX.md) and [executed design evidence](design/BL-005-EVIDENCE.md) now exist; final visual branding remains DEC-005. This defines Snappik's own design language. Do not copy Fastpik logos, artwork, copy or screenshots into product UI.
 
 ## Principles
 
@@ -80,3 +80,5 @@ Keyboard-only core journey, semantic labels, dialog focus trapping/return, statu
 ## Design deliverables before UI implementation
 
 BL-005 produces low-fidelity owner creation/detail, client gallery/review and error/recovery screens, then a reusable component inventory. Review the workflow with synthetic photos and duplicate-name fixtures. Do not embed the private audit gallery or its subjects into public prototypes.
+
+Delivered 15 October 2026: [local interactive wireframes](../prototypes/bl005-ux/README.md), paired ID/EN strings, reusable CSS tokens and [component/state/responsive specification](design/BL-005-UX.md). Browser review covers scoped creation/detail/gallery/viewer/review/error flows with original synthetic SVG images. BL-005 is Done for design/prototype; T-006/T-016 full runtime acceptance remains unexecuted. The memory simulator is not a production application, persistence layer or authorization control. See [evidence and limitations](design/BL-005-EVIDENCE.md).

@@ -1,0 +1,164 @@
+[
+  {
+    "width": 360,
+    "lang": "id",
+    "theme": "dark",
+    "page": "create",
+    "columns": null,
+    "overflow": false,
+    "title": "Siapkan galeri pilihan"
+  },
+  {
+    "width": 360,
+    "lang": "id",
+    "theme": "dark",
+    "page": "detail",
+    "columns": null,
+    "overflow": false,
+    "title": "Detail proyek"
+  },
+  {
+    "width": 360,
+    "lang": "id",
+    "theme": "dark",
+    "page": "gallery",
+    "columns": "150.4px 150.4px",
+    "overflow": false,
+    "title": "Pilih foto untuk diedit"
+  },
+  {
+    "width": 360,
+    "lang": "id",
+    "theme": "dark",
+    "page": "review",
+    "columns": null,
+    "overflow": false,
+    "title": "Periksa pilihan Anda"
+  },
+  {
+    "width": 360,
+    "lang": "id",
+    "theme": "dark",
+    "page": "access",
+    "columns": null,
+    "overflow": false,
+    "title": "Akses pilihan kedaluwarsa"
+  },
+  {
+    "width": 360,
+    "lang": "id",
+    "theme": "dark",
+    "page": "components",
+    "columns": null,
+    "overflow": false,
+    "title": "Token & kontrol bersama"
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "theme": "dark",
+    "page": "create",
+    "columns": null,
+    "overflow": false,
+    "title": "Prepare a selection gallery"
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "theme": "dark",
+    "page": "detail",
+    "columns": null,
+    "overflow": false,
+    "title": "Project detail"
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "theme": "dark",
+    "page": "gallery",
+    "columns": "224.262px 224.262px 224.275px",
+    "overflow": false,
+    "title": "Choose photos to edit"
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "theme": "dark",
+    "page": "review",
+    "columns": null,
+    "overflow": false,
+    "title": "Check your selection"
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "theme": "dark",
+    "page": "access",
+    "columns": null,
+    "overflow": false,
+    "title": "Selection access expired"
+  },
+  {
+    "width": 768,
+    "lang": "en",
+    "theme": "dark",
+    "page": "components",
+    "columns": null,
+    "overflow": false,
+    "title": "Shared tokens & controls"
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "theme": "light",
+    "page": "create",
+    "columns": null,
+    "overflow": false,
+    "title": "Prepare a selection gallery"
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "theme": "light",
+    "page": "detail",
+    "columns": null,
+    "overflow": false,
+    "title": "Project detail"
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "theme": "light",
+    "page": "gallery",
+    "columns": "293px 293px 293px 293px",
+    "overflow": false,
+    "title": "Choose photos to edit"
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "theme": "light",
+    "page": "review",
+    "columns": null,
+    "overflow": false,
+    "title": "Check your selection"
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "theme": "light",
+    "page": "access",
+    "columns": null,
+    "overflow": false,
+    "title": "Selection access expired"
+  },
+  {
+    "width": 1440,
+    "lang": "en",
+    "theme": "light",
+    "page": "components",
+    "columns": null,
+    "overflow": false,
+    "title": "Shared tokens & controls"
+  }
+]

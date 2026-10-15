@@ -2,6 +2,8 @@
 
 Status: application requirements remain **not implemented / full acceptance not tested**. BL-001 has a verified synthetic auth subset documented in [evidence](auth/BL-001-EVIDENCE.md); this does not pass full T-001 or T-015. BL-002's [evidence](drive/BL-002-EVIDENCE.md) maps a 29-check offline feasibility subset to T-005/T-013/T-017/T-022 implications; none is full acceptance. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.
 
+BL-005 is Done for the design/prototype deliverable: [UX specification](design/BL-005-UX.md) and [evidence](design/BL-005-EVIDENCE.md) map REQ-GAL-001/REQ-UX-001 to design-relevant T-006/T-016 checks. Synthetic in-memory journeys, viewport measurements and wireframes do not change the full application acceptance status of those rows.
+
 | Requirement | Business rule(s) | Backlog | Acceptance tests |
 |---|---|---|---|
 | REQ-AUTH-001 | BR-TEN-001, BR-ONB-001 | BL-001, BL-004 | T-001 |

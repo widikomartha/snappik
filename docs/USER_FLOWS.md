@@ -2,6 +2,10 @@
 
 Read [Business rules](BUSINESS_RULES.md) for exact validation. Paths below are Snappik design paths, not routes discovered on Fastpik.
 
+## Local design walkthrough
+
+[BL-005 prototype](../prototypes/bl005-ux/README.md) supplies scoped owner create → durable detail/inventory-pending → client neutral access gate → folder gallery/viewer → note/review → confirmation, plus explicit failure/recovery/access states. Its hash navigation and dashed lab are reviewer tools, not product routing or server enforcement. Use response presets for pending/offline/conflict/unknown/expiry and inventory presets for empty/failed/unavailable-source states. [Specification](design/BL-005-UX.md) maps reusable controls and [evidence](design/BL-005-EVIDENCE.md) records what was actually reviewed. All fixtures are synthetic; downloads/reopen/archive/export/auth/operator flows remain separate implementation work.
+
 ## Owner: first usable project
 
 1. Visitor opens `/`, reads the product/help and selects Sign up.

@@ -1,0 +1,128 @@
+[
+  {
+    "width": 360,
+    "page": "create",
+    "client": 345,
+    "font": "32px",
+    "scroll": 345
+  },
+  {
+    "width": 360,
+    "page": "detail",
+    "client": 345,
+    "font": "32px",
+    "scroll": 345
+  },
+  {
+    "width": 360,
+    "page": "gallery",
+    "client": 345,
+    "font": "32px",
+    "scroll": 345
+  },
+  {
+    "width": 360,
+    "page": "review",
+    "client": 345,
+    "font": "32px",
+    "scroll": 345
+  },
+  {
+    "width": 360,
+    "page": "access",
+    "client": 345,
+    "font": "32px",
+    "scroll": 345
+  },
+  {
+    "width": 360,
+    "page": "components",
+    "client": 345,
+    "font": "32px",
+    "scroll": 345
+  },
+  {
+    "width": 768,
+    "page": "create",
+    "client": 753,
+    "font": "32px",
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "page": "detail",
+    "client": 753,
+    "font": "32px",
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "page": "gallery",
+    "client": 753,
+    "font": "32px",
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "page": "review",
+    "client": 753,
+    "font": "32px",
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "page": "access",
+    "client": 753,
+    "font": "32px",
+    "scroll": 753
+  },
+  {
+    "width": 768,
+    "page": "components",
+    "client": 753,
+    "font": "32px",
+    "scroll": 753
+  },
+  {
+    "width": 1440,
+    "page": "create",
+    "client": 1425,
+    "font": "32px",
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "page": "detail",
+    "client": 1425,
+    "font": "32px",
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "page": "gallery",
+    "client": 1425,
+    "font": "32px",
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "page": "review",
+    "client": 1425,
+    "font": "32px",
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "page": "access",
+    "client": 1425,
+    "font": "32px",
+    "scroll": 1425
+  },
+  {
+    "width": 1440,
+    "page": "components",
+    "client": 1425,
+    "font": "32px",
+    "scroll": 1425
+  }
+]

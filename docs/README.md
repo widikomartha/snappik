@@ -1,6 +1,6 @@
 # Snappik documentation
 
-Version: 0.2 · Updated: 15 October 2026 · Status: implementation planning baseline with isolated feasibility spikes.
+Version: 0.2 · Updated: 15 October 2026 · Status: implementation planning baseline with isolated feasibility spikes and a local UX prototype.
 
 Snappik is a photo-selection and delivery application for studios and their clients. These documents define a new product informed by a Fastpik audit; they do not describe an existing Snappik implementation or reproduce Fastpik's private architecture.
 
@@ -55,9 +55,11 @@ Baseline technical shape: TypeScript web application, Next.js presentation/API l
 
 Executed feasibility subsets: [BL-001 auth](auth/BL-001-EVIDENCE.md) and [BL-002 Drive/hosting](drive/BL-002-EVIDENCE.md). These isolated spikes do not scaffold the application or close their provider gates.
 
+Completed design/prototype deliverable: [BL-005 wireframes](../prototypes/bl005-ux/README.md), [tokens/components/states](design/BL-005-UX.md), [browser review evidence](design/BL-005-EVIDENCE.md). This separate, synthetic, memory-only prototype does not implement application routes, server authorization or persistence and does not pass full T-006/T-016.
+
 ## Document maintenance
 
-Requirement IDs (`REQ-*`) are stable. `BR-*` identifies business rules, `BL-*` backlog work, `T-*` tests, and `DEC-*` open decisions. Changes to a requirement must update its rule, API/schema/design impact and traceability row. Mark work Done only after its acceptance tests pass; BL-001/002 are In progress and other implementation items remain Todo.
+Requirement IDs (`REQ-*`) are stable. `BR-*` identifies business rules, `BL-*` backlog work, `T-*` tests, and `DEC-*` open decisions. Changes to a requirement must update its rule, API/schema/design impact and traceability row. Mark work Done only with item-level evidence; BL-001/002 are In progress, BL-005 is Done for design/prototype only, and other implementation items remain Todo.
 
 Business rules take precedence for behavior; PRD owns scope; API owns wire contracts; Database owns persistence. Resolve contradictions by updating all affected files rather than duplicating a new rule elsewhere. Dates in records use UTC; UI localizes them using studio/browser preferences.
 

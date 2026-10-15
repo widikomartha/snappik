@@ -1,6 +1,6 @@
 # Test and release plan
 
-Status: application acceptance remains planned; **no full acceptance scenario is verified**. BL-001 and BL-002 executed bounded synthetic subsets, detailed below. Fastpik live tests are research, not evidence that Snappik passes. Use deterministic clocks, synthetic Drive adapters and at least two tenants. Selected provider smoke tests run only against dedicated test accounts/folders.
+Status: application acceptance remains planned; **no full acceptance scenario is verified**. BL-001 and BL-002 executed bounded synthetic subsets, detailed below; BL-005 executed a design/prototype review subset. Fastpik live tests are research, not evidence that Snappik passes. Use deterministic clocks, synthetic Drive adapters and at least two tenants. Selected provider smoke tests run only against dedicated test accounts/folders.
 
 ## Fixtures and levels
 
@@ -70,3 +70,9 @@ For authorized integration, replay each synthetic scenario through the actual HT
 Run `npm --prefix spikes/bl002-drive test` from repository root (Node built-ins only, no install). 29/29 offline checks Passed: identity/path/key descriptors, pagination/skip counters, 5,000 images, depth 10, 50 MiB inclusive limits and over-limit failure, incomplete/revoked scans, bounded retries/deadlines and byte-counted temporary staging with injected policy checks. [Evidence](drive/BL-002-EVIDENCE.md) records commands/environment, sizing hypotheses, exact authorized-provider protocol and unsupported modes; [contract](drive/ADAPTER_CONTRACT.md) separates local seams from production obligations.
 
 T-005/T-013/T-017/T-022 remain unverified in full. No real Drive folder/account, OAuth/API key, web proxy, worker, PostgreSQL lease/publication race, production decoder, private bucket, backup restore, browser or PRD pilot load was tested. Dedicated folders are unavailable by user confirmation. DEC-002/003 stay open; do not turn synthetic rate errors or a local disk sample into provider/load acceptance.
+
+## BL-005 design/prototype subset — 15 October 2026
+
+Run `npm --prefix prototypes/bl005-ux run check` and `npm --prefix prototypes/bl005-ux test`. Ten local design checks Passed; [evidence](design/BL-005-EVIDENCE.md) records executed browser review and remaining limits. [Prototype README](../prototypes/bl005-ux/README.md) gives reproducible review steps; [UX specification](design/BL-005-UX.md) defines tokens and component behavior.
+
+Design-relevant T-006 subset: synthetic stable IDs/duplicate names, folders/empty state, missing-thumbnail fallback, distinct keyboard select/enlarge and bounded fixture batches. Design-relevant T-016 subset: 360/768/1440 browser viewports, ID/EN, modal Tab/Escape/focus return, semantic contrast and 200% text reflow. **Wireframes and memory simulations are not full runtime acceptance passes.** Native 200% browser zoom, screen-reader output, real iOS/Android, Firefox/Safari, integrated keyboard journey, canonical server data/media, database locks and provider-backed recovery remain Not run. BL-005's Done status covers design only; BL-009/016 and related server work retain their own acceptance gates.

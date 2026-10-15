@@ -1,6 +1,6 @@
 # Implementation backlog
 
-Status: **BL-001 In progress** (bounded synthetic spike verified; real-provider/deployment and durable-session evidence pending). **BL-002 In progress** (29 offline checks Passed; dedicated Drive/provider/hosting evidence Blocked, DEC-002/003 open). All other items **Todo**. Priorities: P0 foundation/release blocker, P1 core capability, P2 later enhancement. Sizes S/M/L are relative scope, not delivery estimates. Do not interpret this plan as completed application work.
+Status: **BL-001 In progress** (bounded synthetic spike verified; real-provider/deployment and durable-session evidence pending). **BL-002 In progress** (29 offline checks Passed; dedicated Drive/provider/hosting evidence Blocked, DEC-002/003 open). **BL-005 Done for design/prototype only** ([evidence](design/BL-005-EVIDENCE.md)); T-006/T-016 full application acceptance remains untested. All other items **Todo**. Priorities: P0 foundation/release blocker, P1 core capability, P2 later enhancement. Sizes S/M/L are relative scope, not delivery estimates. Do not interpret this plan as completed application work.
 
 ## Milestones
 
@@ -21,7 +21,7 @@ Status: **BL-001 In progress** (bounded synthetic spike verified; real-provider/
 | BL-002 | P0 / M | **In progress** — bounded Drive/streaming contract, synthetic spike and conditional hosting assessment | None | [ADR-005](decisions/ADR-005-drive-hosting-feasibility.md), [contract](drive/ADAPTER_CONTRACT.md), [evidence](drive/BL-002-EVIDENCE.md): 29/29 offline checks Passed. Dedicated public/private/shared folders, real keys/scopes/revocation/quotas and hosted proxy/worker/DB/storage evidence pending; DEC-002/003 open, not Done |
 | BL-003 | P0 / L | Scaffold web/worker, migrations, scoped repository interfaces, audit/idempotency/jobs and CI | BL-001, BL-002 | Clean setup on empty database; migration/rollback strategy; transaction and lease tests; T-002/004/017 foundations |
 | BL-004 | P0 / M | Auth integration, tenant membership, idempotent provisioning and setup UI | BL-003 | Repeat/concurrent setup yields one studio/trial/defaults; protected access tests T-001/002/003 pass |
-| BL-005 | P1 / M | Wireframes, design tokens and accessible shared controls | None | Creation/detail/gallery/review/error flows reviewed with synthetic data; no future-feature dead buttons |
+| BL-005 | P1 / M | **Done — design/prototype only**: original wireframes, semantic tokens, accessible controls and paired ID/EN copy | None | [Prototype](../prototypes/bl005-ux/README.md), [component/state specification](design/BL-005-UX.md), [evidence](design/BL-005-EVIDENCE.md): creation/detail/gallery/viewer/review/error/access reviewed with synthetic data; 10 design checks and 360/768/1440 browser review; no future-feature dead buttons. Full T-006/T-016 runtime acceptance belongs to later integration |
 | BL-006 | P0 / L | Project create/edit/archive/restore and entitlement checks | BL-004, BL-005 | Atomic quota lock, durable create result, preserved deadlines; T-004/014 and applicable T-019 pass |
 | BL-007 | P0 / L | Drive adapter, inventory worker, stable photo IDs and thumbnail generation | BL-002, BL-006 | Complete generation semantics, failure retention and bounded processing; T-005/017 pass |
 | BL-008 | P0 / M | Gallery grant/password/expiry/revocation policies and protected media delivery | BL-006 | Independent main/download grants; server checks on every route; T-012 and relevant T-018 pass |
@@ -55,4 +55,4 @@ Each issue should contain: ID/title, user outcome, requirement IDs, scope/exclus
 
 ## Recommended next execution
 
-Resume BL-001/002 through their evidence/handoffs when authorized test environments exist; BL-005 can proceed independently in its own scoped chat. Then BL-003/004/006 establish a usable studio-to-project slice. Integrate gallery/selection/confirmation before adding paid plans or optional automation. Do not deploy or connect paid services as part of documentation creation.
+Resume BL-001/002 through their evidence/handoffs when authorized test environments exist; BL-005's local design deliverable is complete. BL-003/004/006 establish a usable studio-to-project slice; use the BL-005 controls/states as design input. Integrate gallery/selection/confirmation before adding paid plans or optional automation. Do not deploy or connect paid services as part of design creation.

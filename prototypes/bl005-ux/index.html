@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><title>Snappik · BL-005 wireframe workbench</title><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="styles.css"></head>
+<body class="workbench">
+  <header class="bench-head"><strong>Snappik / BL-005</strong><span>Local synthetic wireframes · no server integration</span>
+    <label>Viewport <select id="width"><option value="fluid">Fluid</option><option>360</option><option>768</option><option>1440</option></select></label>
+    <label>Text scale <select id="scale"><option value="100">100%</option><option value="200">200%</option></select></label>
+    <a href="app.html">Open without frame</a>
+  </header>
+  <p class="bench-note">Width presets set the inner viewport in CSS pixels. Text scale is a reflow aid; verify actual browser zoom separately. The frame region scrolls when wider than this window.</p>
+  <div class="frame-region" role="region" aria-label="Wireframe viewport" tabindex="0"><iframe id="preview" title="Snappik synthetic interactive wireframes" src="app.html"></iframe></div>
+  <script type="module" src="workbench.mjs"></script>
+</body></html>
