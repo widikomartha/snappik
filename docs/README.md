@@ -1,6 +1,6 @@
 # Snappik documentation
 
-Version: 0.2 · Updated: 15 October 2026 · Status: implementation planning baseline with isolated feasibility spikes and a local UX prototype.
+Version: 0.3 · Updated: 15 October 2026 · Status: local web/worker/PostgreSQL foundation plus feasibility spikes and UX prototype; provider/product integration pending.
 
 Snappik is a photo-selection and delivery application for studios and their clients. These documents define a new product informed by a Fastpik audit; they do not describe an existing Snappik implementation or reproduce Fastpik's private architecture.
 
@@ -51,7 +51,7 @@ Snappik is a photo-selection and delivery application for studios and their clie
 
 MVP includes one owner per studio, account-free galleries, one main selection set per project, individual downloads, limited operator diagnostics, and trial/manual entitlement grants. Automated payments, staff invitations, extras, printing, batch import, Telegram, custom domains and CRM synchronization are outside MVP. See [PRD](PRD.md) for exact requirements.
 
-Baseline technical shape: TypeScript web application, Next.js presentation/API layer, PostgreSQL persistence, private object storage for derived images, and a worker from the same codebase. Auth provider, Drive access method and hosting must be selected through the decision gates. No framework versions, credentials or production integrations are installed by these docs.
+Baseline technical shape: TypeScript web application, Next.js presentation/API layer, PostgreSQL persistence, private object storage for derived images, and a worker from the same codebase. BL-003 provides [local setup](../README.md), pinned framework/lockfile, initial schema/scoped repositories, queue/audit/idempotency, CI setup and [actual PostgreSQL evidence](foundation/BL-003-EVIDENCE.md). Auth provider, Drive access method and hosting remain open through decision gates; no live credentials/provider integration is installed.
 
 Executed feasibility subsets: [BL-001 auth](auth/BL-001-EVIDENCE.md) and [BL-002 Drive/hosting](drive/BL-002-EVIDENCE.md). These isolated spikes do not scaffold the application or close their provider gates.
 
@@ -59,7 +59,7 @@ Completed design/prototype deliverable: [BL-005 wireframes](../prototypes/bl005-
 
 ## Document maintenance
 
-Requirement IDs (`REQ-*`) are stable. `BR-*` identifies business rules, `BL-*` backlog work, `T-*` tests, and `DEC-*` open decisions. Changes to a requirement must update its rule, API/schema/design impact and traceability row. Mark work Done only with item-level evidence; BL-001/002 are In progress, BL-005 is Done for design/prototype only, and other implementation items remain Todo.
+Requirement IDs (`REQ-*`) are stable. `BR-*` identifies business rules, `BL-*` backlog work, `T-*` tests, and `DEC-*` open decisions. Changes to a requirement must update its rule, API/schema/design impact and traceability row. Mark work Done only with item-level evidence; BL-001/002/003 are In progress, BL-005 is Done for design/prototype only, and other implementation items remain Todo.
 
 Business rules take precedence for behavior; PRD owns scope; API owns wire contracts; Database owns persistence. Resolve contradictions by updating all affected files rather than duplicating a new rule elsewhere. Dates in records use UTC; UI localizes them using studio/browser preferences.
 

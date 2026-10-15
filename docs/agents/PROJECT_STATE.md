@@ -1,54 +1,52 @@
 # Project state
 
-Snapshot: 15 October 2026, BL-005 session. Starting local master / HEAD `9cb7fbb` (BL-002 commit), initially clean. The user subsequently authorized a local BL-005 commit; this snapshot accompanies it (resolve its SHA with git log). No push, publish, deployment or provider connection authorized/performed. Verify actual files/Git each session; the local workspace is the implementation source of truth.
+Snapshot: 15 October 2026 (Asia/Makassar), BL-003 implementation session. Starting clean local master / HEAD `1089964` (BL-005). User subsequently authorized a local BL-003 commit; this snapshot accompanies it (resolve SHA with git log). No push, publish, deployment, real-provider connection or paid provisioning. Verify actual Git/files each chat; local workspace is authoritative.
 
-| Area | State | Evidence / implication |
+| Area | Current state | Evidence / limitation |
 |---|---|---|
-| Product and agent documentation | Present, updated for BL-001/002/005 | PRD/rules/API/Database scope unchanged by BL-005; Design/User Flows link original local wireframes and reviewed state/component contracts |
-| Research | Present, private | Audit assets not used in spike/public fixtures |
-| Git | Initialized, master / `9cb7fbb` at BL-005 start | Existing commits preserved; snapshot included in user-authorized BL-005 local commit; no unrelated starting changes or push |
-| Application web/worker | Not scaffolded | No root application manifest/framework; isolated spike is not BL-003 |
-| Core UX design | BL-005 Done for design/prototype | [Local prototype](../../prototypes/bl005-ux/README.md), [specification](../design/BL-005-UX.md), [evidence](../design/BL-005-EVIDENCE.md): original SVG fixtures, tokens/components, ID/EN, reviewed creation/detail/gallery/viewer/review/error/access; zero dependencies |
-| Auth feasibility | BL-001 In progress; DEC-001 open | [ADR-004](../decisions/ADR-004-auth-session-feasibility.md): conditional Better Auth 1.7.9 + PostgreSQL recommendation, alternatives/costs, observed limitations |
-| Auth contract and executable spike | Synthetic subset verified | [Contract](../auth/SESSION_CONTRACT.md), [evidence](../auth/BL-001-EVIDENCE.md), [spike](../../spikes/bl001-auth/README.md); 18/18 local handler/policy checks, not full T-001/T-015 |
-| Runtime/package manager | Local spike only | Node 24.18.0, npm 11.16.0, PowerShell 7.6.5; exact isolated manifest/lockfile; production runtime/framework still unselected |
-| Real auth/email/operator recovery | Not connected/verified | Needs approved target topology/test accounts and explicit provider authorization; no secrets read |
-| Drive/hosting/storage | BL-002 In progress; DEC-002/003 open | [ADR-005](../decisions/ADR-005-drive-hosting-feasibility.md): conditional access/Render Singapore/private-storage assessment; no provider selected/provisioned |
-| Drive/streaming contract and executable spike | 29/29 offline checks Passed | [Contract](../drive/ADAPTER_CONTRACT.md), [evidence](../drive/BL-002-EVIDENCE.md), [spike](../../spikes/bl002-drive/README.md); no dependencies, credentials or HTTP calls |
-| Real Drive / hosting feasibility | Blocked on authorized dedicated test fixtures and infrastructure | User confirmed test folders unavailable; API key/OAuth/private/shared/key/revocation/assigned-quota and actual proxy/worker/storage evidence absent |
-| Database/migrations | Logical only | No DB connection, migration or PostgreSQL race evidence; owner-session security candidate added |
-| API/UI/jobs/CI | Contracts plus isolated UX prototype | No integrated app routes/UI, server authorization, jobs, onboarding/operator implementation or CI; memory simulator is not production code |
-| Acceptance | Full application acceptance planned | BL-005 design checks Passed (10 local checks, browser widths/keyboard/recovery, ID/EN); T-006/T-016 full runtime not run. BL-001/002 full scenarios still not passed; other backlog items Todo |
-| Deployment/billing | Absent | No publish/provider purchase; deferred billing unchanged |
+| Web / worker | Provider-independent TypeScript/Next.js foundation | [Root setup](../../README.md), [evidence](../foundation/BL-003-EVIDENCE.md); status/health only; compiled worker/dispatcher, no business routes/real handlers |
+| Runtime / package manager | Node 24.18.0 / npm 11.16.0, PowerShell 7.6.5, Windows x64 | Root package/lock, .node-version, exact install/ci executed; Next 16.4.1, React 19.3.1, TS 5.9.3, pg 8.23.1, tsx 4.23.15 |
+| Database | Initial app SQL 001 + lease expansion 002; real isolated PostgreSQL 18.4 verified | Composite scope keys, uniqueness, immutable history, migrations/checksums/compatibility, runtime grant template; no provider-owned auth schema or deployed role |
+| Tenant / reliability | Scoped repositories, membership/suspension, transaction/audit/idempotency, durable queue/leases/fencing/retries | 4 unit + 17 real PG tests Passed; principals and business effects explicitly synthetic; no auth provider/session revocation claim |
+| Config / health / CI | Startup config, PG timeout/pool bounds, no-store live/ready, Windows workflow configured | Production web/compiled-worker/CLI smoke Passed; hosted CI Not run; replica capacity untested |
+| BL-003 acceptance | In progress, local foundation implemented/verified | T-002/004/017 foundation subsets only; operational/provider-schema portions gated by DEC-001/002/003; no adjacent backlog services implemented |
+| Auth | BL-001 In progress / DEC-001 open | [Candidate contract](../auth/SESSION_CONTRACT.md), [evidence](../auth/BL-001-EVIDENCE.md); real callback/email/MFA/durable revocation still pending; scaffold adapter returns no principal |
+| Drive / hosting / storage | BL-002 In progress / DEC-002/003 open | [ADR-005](../decisions/ADR-005-drive-hosting-feasibility.md), [evidence](../drive/BL-002-EVIDENCE.md); dedicated fixtures unavailable; resource-key/credential schema and live infrastructure still unresolved; scaffold fails unconfigured |
+| UX | BL-005 Done for design/prototype only | [Prototype](../../prototypes/bl005-ux/README.md), [evidence](../design/BL-005-EVIDENCE.md); no application integration; full T-006/T-016 not passed |
+| Product scope | Contracts unchanged | PRD/rules unchanged; API actual-health inventory and Database physical invariants clarified; onboarding/project/inventory/gallery/selection/operator services pending |
+| Research / privacy | Private research preserved, unused by scaffold | Only synthetic accounts/records, no live tokens/photos/credentials logged or copied |
+| Deployment / recovery | Not connected/deployed | No production host/storage/auth selected; no backup restore, load or rolling release drill; beta embedded-PG package is development tooling only |
 
-## Verified commands
+## Exact install, setup and verification commands
 
-From repository root:
+Run from repository root on the declared Node/npm versions. Full command explanations: [root README](../../README.md). Local setup (database command stays in its terminal):
 
 ```powershell
-npm --prefix spikes/bl001-auth test
-npm --prefix spikes/bl001-auth audit --omit=dev --json
-npm --prefix spikes/bl002-drive test
-npm --prefix prototypes/bl005-ux run check
-npm --prefix prototypes/bl005-ux test
-npm --prefix prototypes/bl005-ux run preview
-pwsh -NoProfile -File docs/tools/validate-docs.ps1
+npm ci --ignore-scripts --no-fund --no-audit
+Copy-Item .env.example .env.local
+npm run db:local
 ```
 
-BL-001 previously executed: 18/18 Passed, zero skipped; registry audit zero reported advisories at that inspection, not rerun during BL-002. BL-002 executed: 29/29 Passed, zero skipped. Final docs/syntax/diff evidence is in the [BL-002 handoff](handoff-2026-10-15-BL-002.md). Test inputs/accounts/OAuth/email/storage are synthetic; no browser or real provider acceptance implied.
+Another terminal: `npm run db:migrate`, then `npm run dev`. Separate worker terminal: `npm run worker`. After build, `npm start` / `npm run worker:start` use the production web/compiled-worker entries. The local DB helper uses only its dedicated loopback cluster at 55433 under `.local/postgres-dev`; no reset command exists. The sample local cluster owner is not a shared runtime role. Normal runtime must not receive MIGRATION_DATABASE_URL.
 
-BL-005 executed: 10/10 local design checks; syntax; browser review at 360/768/1440 with 18 normal-size layout measurements and 18 text-200% measurements; synthetic keyboard/notes/conflict/response-loss/access review. Native browser zoom/assistive technology/real devices and full runtime T-006/T-016 remain untested. Preview uses loopback 4175, no external connection; it needs local socket permission in this sandbox and is stopped after QA. See [BL-005 evidence](../design/BL-005-EVIDENCE.md) and [handoff](handoff-2026-10-15-BL-005.md). Root application dev/build/migration/seed still absent; prototype commands must not be described as application commands.
+Executed verification without creating a persistent .env.local:
 
-Dependency installation actually used `npm install --prefix spikes/bl001-auth --ignore-scripts --no-fund --no-audit`. Fresh-checkout reproduction uses `npm --prefix spikes/bl001-auth ci --ignore-scripts --no-fund --no-audit` (documented, not executed this session). No root app dev/build/lint/typecheck/migration/seed command exists. Restricted sandbox Git may fail; approved local Git inspection succeeded without changing config. Writes/registry access required sandbox escalation.
+```powershell
+$env:APP_ORIGIN='http://localhost:3000'
+$env:DATABASE_URL='postgresql://synthetic:synthetic@127.0.0.1:55433/build_only'
+$env:NEXT_TELEMETRY_DISABLED='1'
+npm run check
+npm run test:smoke
+```
 
-The preceding install/escalation notes describe BL-001. BL-002 local read/write/Git and commands worked without escalation; dependency-free lock generated with `npm --prefix spikes/bl002-drive install --package-lock-only --ignore-scripts --no-audit --no-fund --offline`. Its tests need no installation or registry access.
+`check` executes `npm run typecheck` (Next typegen + strict tsc), `npm test` (4/4), `npm run test:db` (17/17, PostgreSQL 18.4), `npm run build` (Next Webpack production + tsc worker). All Passed, exit 0, zero skipped. The isolated DB harness never uses DATABASE_URL; fresh generated clusters with synthetic credentials are stopped and retained under ignored `.local/pg-test-*`. Smoke starts/stops production web/compiled worker and runs migration CLI on another fresh database: liveness, ready 503 -> migrations -> ready 200, no-store, unconfigured status, absent business routes and worker restart Passed. This proves actual migration CLI/process entries, not an authenticated product flow.
 
-## Active work and first resume action
+Also executed `npm install --ignore-scripts --no-fund --no-audit --fetch-retries=0 --fetch-timeout=30000` and clean lock `npm ci` with the same flags; both Passed (48 platform packages). `npm run db:local -- --check` ran twice: first setup and repeat startup Passed on the dedicated retained `.local/postgres-dev` database; no reset. `npm audit --omit=dev --json --fetch-retries=0 --fetch-timeout=15000`: zero reported runtime advisories at inspection. Final docs/whitespace/review evidence is in the active [BL-003 handoff](handoff-2026-10-15-BL-003.md). Hosted CI, Linux/macOS, interactive `dev` walkthrough, real providers and deployment are Not run. No `.env.local` was created. Sandboxed build/DB attempts initially failed or stalled; final checks used approved local subprocess/loopback permissions. No approval review rejection.
 
-BL-005 design/prototype completed. [Handoff](handoff-2026-10-15-BL-005.md) identifies files, executed review and subsequent local commit authorization. No provider gate blocks this design slice. First action in a later BL-009 integration chat: read that handoff and inspect actual manifests/Git, then check BL-007/008 readiness before adapting the gallery controls to real server/media contracts. Do not import the simulator as an auth/domain/persistence layer. Choose one backlog ID per new chat; this session did not implement adjacent items.
+Existing spike/prototype commands remain independent: `npm --prefix spikes/bl001-auth test`, `npm --prefix spikes/bl002-drive test`, `npm --prefix prototypes/bl005-ux run check`, `npm --prefix prototypes/bl005-ux test`. Their previous results are in their existing evidence/handoffs; not rerun for BL-003 because those sources were unchanged. Documentation check: `pwsh -NoProfile -File docs/tools/validate-docs.ps1`.
 
-Current BL-002 resume: read [BL-002 handoff](handoff-2026-10-15-BL-002.md) and current Git, then establish an authorized synthetic Drive root and nonsecret test credential-config reference. First live case, only after express authorization: public-folder metadata/list/media and private-folder denial. No provider available now; do not connect/provision automatically. [Evidence](../drive/BL-002-EVIDENCE.md) contains the remaining full matrix. Keep DEC-002/003 open and BL-002 In progress until real evidence exists.
+## Active handoff and exact next action
 
-Separate BL-001 work remains active in [its handoff](handoff-2026-10-15-BL-001.md). First action in the next BL-001 chat: inspect that handoff and current Git, then establish whether an approved deployment topology and authorized isolated IdP/email/PostgreSQL environment are available. Do not contact providers or request secret values in chat without authorization. DEC-001 remains open; completed synthetic subsets must not be relabeled production-ready.
+BL-003 active [handoff](handoff-2026-10-15-BL-003.md) supersedes BL-005 as the current workspace implementation snapshot. Local independent deliverable is ready for review; whole item remains In progress for operational/provider-schema gates. First action in the next new BL-003 chat: read that handoff, inspect current Git/manifests, and inspect DEC-001/002/003 closure evidence to determine whether approved provider schema and an authorized target PostgreSQL/hosting topology now exist. If gates remain open, preserve the verified local foundation and report the exact missing decision; do not fabricate a provider migration or start BL-004/006/007. No live provider authorization is implied by this handoff.
 
-Remaining BL-001: durable shared revocation and identity/account races on PostgreSQL; actual callback/email/TOTP recovery smoke through the selected Next.js/hosting topology; framework/driver compatibility and credential resource/throttling review. Remaining BL-002: minimum Drive scopes/visibility and resource keys, real revocation/quotas, API/schema ownership/key integration decision, hosted streaming/worker/DB/private storage/backup evidence and realistic budget. BL-003/004/007/008/013/014/017 were not implemented. Other independent backlog work requires its own scoped chat.
+BL-001/002 remain separately active in [auth handoff](handoff-2026-10-15-BL-001.md) and [Drive handoff](handoff-2026-10-15-BL-002.md). BL-005 [design handoff](handoff-2026-10-15-BL-005.md) is completed and remains valid for later UI integration. Open provider gates require their own authorized evidence; BL-003 did not close them. Other backlog IDs remain outside this chat.

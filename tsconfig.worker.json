@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": false, "incremental": false, "outDir": "dist", "rootDir": "src", "module": "NodeNext", "moduleResolution": "NodeNext", "plugins": [] },
+  "include": ["src/worker/**/*.ts", "src/db/**/*.ts", "src/modules/**/*.ts", "src/adapters/**/*.ts", "src/config.ts"],
+  "exclude": ["node_modules"]
+}

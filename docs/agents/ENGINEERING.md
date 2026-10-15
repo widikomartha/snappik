@@ -1,6 +1,6 @@
 # Engineering guidance for agents
 
-Status: implementation conventions for the proposed stack. These are repository design choices, not claims that tooling already exists. [Architecture](../ARCHITECTURE.md), [Database](../DATABASE.md), [API](../API.md) and [Security](../SECURITY.md) remain authoritative for their contracts.
+Status: implementation conventions with a BL-003 local foundation. [Root setup](../../README.md) and [evidence](../foundation/BL-003-EVIDENCE.md) identify actual commands and boundaries; later product/provider tooling remains pending. [Architecture](../ARCHITECTURE.md), [Database](../DATABASE.md), [API](../API.md) and [Security](../SECURITY.md) remain authoritative for their contracts.
 
 ## Local setup and dependencies
 

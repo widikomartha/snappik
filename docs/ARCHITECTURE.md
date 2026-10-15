@@ -1,16 +1,16 @@
 # Architecture
 
-Status: target design; no application scaffold exists. BL-001 adds an isolated synthetic [auth spike](../spikes/bl001-auth/README.md); BL-002 adds an offline [Drive spike](../spikes/bl002-drive/README.md). Related: [ADR-001](decisions/ADR-001-modular-monolith.md), [Database](DATABASE.md), [API](API.md).
+Status: target design with a verified provider-independent BL-003 local foundation ([setup](../README.md), [evidence](foundation/BL-003-EVIDENCE.md)). Only status/health web routes, scoped persistence and queue infrastructure exist; product routes/handlers remain pending. BL-001 adds an isolated synthetic [auth spike](../spikes/bl001-auth/README.md); BL-002 adds an offline [Drive spike](../spikes/bl002-drive/README.md). Related: [ADR-001](decisions/ADR-001-modular-monolith.md), [Database](DATABASE.md), [API](API.md).
 
 ## Baseline stack and unresolved providers
 
 | Concern | Baseline | Status |
 |---|---|---|
-| Web and API | TypeScript, Next.js; same-origin browser/API deployment | Baseline; pin supported versions when scaffolding |
-| Persistence | PostgreSQL with explicit migrations and transactions | Baseline; managed host undecided |
+| Web and API | TypeScript, Next.js; same-origin browser/API deployment | Local Next 16.4.1 / React 19.3.1 / TS 5.9.3; Node 24.18.0 / npm 11.16.0 pinned and built; business endpoints pending |
+| Persistence | PostgreSQL with explicit migrations and transactions | Initial app schema/transactions verified on isolated PostgreSQL 18.4; managed host and provider-owned auth schema undecided |
 | Authentication | Conditional Better Auth/PostgreSQL server-session candidate | DEC-001 open; [ADR-004](decisions/ADR-004-auth-session-feasibility.md) and [candidate contract](auth/SESSION_CONTRACT.md); synthetic evidence only |
 | Source inventory | Google Drive adapter using supported APIs | DEC-002 open: [bounded candidate contract](drive/ADAPTER_CONTRACT.md), 29 synthetic checks; authorized folder/API evidence pending |
-| Async work | PostgreSQL-backed jobs, worker from the same repository | Baseline; no separate Redis requirement for MVP |
+| Async work | PostgreSQL-backed jobs, worker from the same repository | Local claim/lease/fencing/retry infrastructure verified; all real handlers explicitly unconfigured; no Redis |
 | Derived assets | Private object storage plus controlled media endpoint | DEC-003 open: [conditional hosting proposal](decisions/ADR-005-drive-hosting-feasibility.md); no provider infrastructure verified |
 | Operations | Structured logs, counters, error reporting, health checks | Baseline; vendor undecided |
 
@@ -49,7 +49,7 @@ Boundaries inside one codebase:
 | Delivery | Authorized image/download responses | Proxy arbitrary request URLs |
 | Operations | Jobs, audit records, diagnostic projections | Provide unrestricted operator database editing |
 
-Suggested source layout when implementation starts: `src/app` for UI/routes, `src/modules/<domain>` for services/policies, `src/adapters` for providers, `src/db` for schema/migrations, `src/worker` for handlers and `tests` for domain/integration/E2E suites. Route handlers remain thin; server actions, if used, invoke the same authenticated services.
+Current layout: `src/app` for status/health, `src/modules/tenancy` and `src/modules/reliability` for scoped repositories/infrastructure, `src/adapters` for fail-closed interfaces, `src/db` for SQL/migration/pool and `src/worker` for the dispatcher. `tests` contains unit/actual PostgreSQL checks. Domain services/transport for later backlog features still need implementation. Route handlers remain thin; server actions, if used, invoke the same authenticated services.
 
 ## Request path and consistency
 
@@ -84,7 +84,7 @@ Two deployable processes share domain code: web and worker. PostgreSQL is the du
 
 Handlers: `inventory_scan`, `thumbnail_generate`, `project_purge`, `cache_cleanup`, `expired_session_cleanup`, `retention_cleanup`. Proposed retry delays: 5 s, 30 s, 2 m, 10 m, 30 m with jitter; permanent permission/validation failures stop early. Exhausted jobs become failed with safe retry controls. A duplicate worker execution must be harmless.
 
-BL-002 calculates an initial attempt plus at most five retries with positive jitter and respects later Retry-After hints. Scheduling waits release leases; publication needs current generation/config and lease fencing so a stale worker cannot overwrite newer work. These are pending PostgreSQL integration obligations, not implemented by the pure scan or delay functions; see [evidence](drive/BL-002-EVIDENCE.md).
+BL-002 calculates an initial attempt plus at most five retries with positive jitter and respects later Retry-After hints. BL-003 now verifies this queue schedule on PostgreSQL, with released waiting leases, lease-token fencing and atomic publication/completion helpers. It also tests real killed-process recovery and renewal. Actual inventory publication must still validate generation/config and source/grants in BL-007; these helpers do not implement inventory or any other job handler. See [foundation evidence](foundation/BL-003-EVIDENCE.md) and [Drive evidence](drive/BL-002-EVIDENCE.md).
 
 ## Monitoring and scaling decisions
 

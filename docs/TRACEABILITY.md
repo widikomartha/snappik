@@ -4,6 +4,8 @@ Status: application requirements remain **not implemented / full acceptance not 
 
 BL-005 is Done for the design/prototype deliverable: [UX specification](design/BL-005-UX.md) and [evidence](design/BL-005-EVIDENCE.md) map REQ-GAL-001/REQ-UX-001 to design-relevant T-006/T-016 checks. Synthetic in-memory journeys, viewport measurements and wireframes do not change the full application acceptance status of those rows.
 
+BL-003 [foundation evidence](foundation/BL-003-EVIDENCE.md) verifies REQ-TEN-001 / BR-TEN-001 scoped persistence and REQ-REL-001 / BR-REL-001/002 atomic retry/queue foundations on actual PostgreSQL. T-002/T-004/T-017 remain incomplete as full product scenarios: real auth, HTTP permissions, project quota and actual inventory/provider behavior remain in their owning backlog items. BL-003 is In progress for gated operational/provider-schema work; isolated PG evidence does not close DEC-001/002/003.
+
 | Requirement | Business rule(s) | Backlog | Acceptance tests |
 |---|---|---|---|
 | REQ-AUTH-001 | BR-TEN-001, BR-ONB-001 | BL-001, BL-004 | T-001 |

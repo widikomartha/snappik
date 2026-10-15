@@ -1,6 +1,6 @@
 # Database design
 
-Status: logical PostgreSQL schema for MVP, not executable migration SQL. Apply migrations only after provider/identity decisions and schema review. IDs below are UUIDs unless stated otherwise; timestamps are `timestamptz` stored as UTC; JSON is `jsonb` with application schema validation. Use `NOT NULL` unless a field is explicitly optional. Audit timestamps are server-generated.
+Status: logical MVP contract with initial provider-independent [app migrations](../src/db/migrations/001_foundation.sql) and [lease expansion](../src/db/migrations/002_lease_fencing.sql), verified on isolated PostgreSQL 18.4 in BL-003. Provider-owned auth/session tables and unresolved Drive credential/resource-key extensions are excluded until their decisions close. Existing source fields do not prove source validation. Apply only reviewed migrations to a known isolated database; no provider/production readiness is implied. IDs below are UUIDs unless stated otherwise; timestamps are `timestamptz` stored as UTC; JSON is `jsonb` with application schema validation. Use `NOT NULL` unless a field is explicitly optional. Audit timestamps are server-generated.
 
 ## Relationships
 
@@ -51,7 +51,7 @@ Only a completed generation marks unseen photos `available=false`. Failed scans 
 
 | Table | Fields | Keys / rules |
 |---|---|---|
-| `selection_sets` | id, studio_id, project_id, workflow_id, status (`not_started/selecting/confirmed`), revision, current_confirmation_id optional, updated_at | One set per project/workflow; composite FKs to same tenant/project/workflow; revision >= 0; MVP main only |
+| `selection_sets` | id, studio_id, project_id, workflow_id, workflow_kind (`main`), status (`not_started/selecting/confirmed`), revision, current_confirmation_id optional, updated_at | One set per project/workflow; composite FKs to same tenant/project/workflow/kind; revision >= 0; constant discriminator enforces MVP main only |
 | `selection_items` | studio_id, project_id, selection_set_id, photo_id, note optional, selected_at | PK `(selection_set_id,photo_id)`; composite FKs prevent cross-project set/photo references; note <=500 code points; notes plain text |
 | `selection_confirmations` | id, studio_id, project_id, selection_set_id, confirmed_revision, actor_kind (`client/owner`), actor_reference, snapshot, confirmed_at | Unique `(selection_set_id,confirmed_revision)`; snapshot array contains photo ID, provider ID, name, path, source version, note; immutable after insert |
 | `gallery_sessions` | id, token_hash, studio_id, project_id, workflow_id, project_access_version, workflow_access_version, expires_at, revoked_at optional, created_at | Unique token_hash; composite FKs; random opaque cookie token returned once, only hash persisted; never authorizes owner API |
@@ -64,7 +64,7 @@ Draft state/count/quota and confirmation transitions involve multiple rows, so u
 
 | Table | Fields | Keys / rules |
 |---|---|---|
-| `jobs` | id, studio_id optional for global maintenance, project_id optional, kind, dedupe_key, payload, state (`queued/running/succeeded/failed`), attempts, available_at, lease_until optional, worker_id optional, result optional, error_code optional, created_at, finished_at optional | Partial unique active `(kind,dedupe_key)`; bounded versioned payload; lease recovery; optional project FK consistent with studio |
+| `jobs` | id, studio_id optional for global maintenance, project_id optional, kind, dedupe_key, payload, state (`queued/running/succeeded/failed`), attempts, available_at, lease_until optional, worker_id optional, lease_token, result optional, error_code optional, created_at, finished_at optional | Partial unique active `(kind,dedupe_key)`; bounded versioned payload; lease_token bigint increments on claim; recovery/renew/fail/publish require current unexpired token+worker; optional project FK consistent with studio |
 | `idempotency_keys` | id, scope, key, request_hash, state (`in_progress/completed`), response_status optional, response_body optional, created_at, expires_at | Unique `(scope,key)`; response contains no passwords or gallery cookie material; mutation writes/marks completion atomically |
 | `audit_events` | id, studio_id optional, project_id optional, actor_kind, actor_id optional, action, target_type, target_id, reason optional, before_summary optional, after_summary optional, request_id, created_at | Append-only application access; redact secret/token/note values; separate retention from project content |
 
@@ -92,6 +92,10 @@ Draft state/count/quota and confirmation transitions involve multiple rows, so u
 **Inventory completion:** lock project then set before publishing availability changes so confirmation cannot race publication. External scanning happens outside locks. Removed selected references remain for review/history.
 
 ## Deletion and migration policy
+
+BL-003 adds `schema_migrations(name,checksum,applied_at)` and singleton `schema_compatibility(minimum_runtime)`. SQL+journal commit atomically under an advisory lock. Runtime level 2 requires migration 002 and minimum_runtime <=2. Future compatible expansions retain that floor; breaking contracts raise it after planning deployment. SQL tests cover empty DB, 001 populated data -> 002, repeated/concurrent apply, drift rejection, failed-DDL rollback, additive future read and incompatible-floor denial. No destructive down/reset command exists. Roll back applications to a compatible level-2 artifact while retaining schema; never resume a pre-fencing worker. No old production artifact or hosted rollback/restore is verified.
+
+[Runtime grants](../src/db/runtime-grants.sql) are a separate non-owner role template, tested with SET ROLE in the isolated cluster. They grant queue/key writes, allowlisted audit insertion and limited counter/role columns for SELECT FOR UPDATE; no membership-key/operator/history/DDL writes. Later business services need their own least-privilege write grants. Repositories implement tenant predicates; composite FKs protect relational scope, without claiming RLS. Trigger-protected audit deletion needs a separately reviewed retention mechanism in BL-015; no general bypass/purge helper is exposed now.
 
 Archive is reversible. Purge checks archived timestamp, restore status and any retention hold inside a transaction before deleting project-owned data and queuing object deletion. Keep minimal redacted audit evidence only for the approved retention window. Never cascade into users/studios or upstream Drive files from project purge.
 

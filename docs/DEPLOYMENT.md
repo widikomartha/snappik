@@ -1,6 +1,6 @@
 # Deployment and operations
 
-Status: provider-neutral runbook. Hosting/auth/storage remain gated by DEC-001/003. BL-001 has an isolated synthetic auth spike only; no live infrastructure, environment files or deployment scripts exist. The [candidate session configuration](auth/SESSION_CONTRACT.md) adds BETTER_AUTH_URL/SECRET(S), AUTH_INSTANCE_ID, restricted AUTH_DATABASE_URL and AUTH_MAIL_CONFIG_REF; these do not select hosting or authorize provider connection.
+Status: provider-neutral runbook with a verified BL-003 [local setup/build/migration harness](../README.md) and [evidence](foundation/BL-003-EVIDENCE.md). Hosting/auth/storage remain gated by DEC-001/003; no live infrastructure, deployed roles or provider deployment scripts exist. `.env.example` contains only harmless synthetic loopback configuration. BL-001 has an isolated synthetic auth spike. The [candidate session configuration](auth/SESSION_CONTRACT.md) adds BETTER_AUTH_URL/SECRET(S), AUTH_INSTANCE_ID, restricted AUTH_DATABASE_URL and AUTH_MAIL_CONFIG_REF; these do not select hosting or authorize provider connection.
 
 BL-002 adds an offline [Drive/streaming spike](../spikes/bl002-drive/README.md), [candidate contract](drive/ADAPTER_CONTRACT.md) and [ADR-005](decisions/ADR-005-drive-hosting-feasibility.md). Its conditional evaluation of Render Singapore web/worker/PostgreSQL plus private object storage does not select a provider. DEC-002/003 remain open; no infrastructure or provider configuration is present.
 
@@ -21,6 +21,8 @@ Deploy web and worker from the same immutable build/commit, with a separately tr
 ## Configuration contract
 
 Names are proposed application configuration keys, not framework-specific auto-discovery names. None contains an actual value/secret here.
+
+The scaffold validator currently consumes `APP_ORIGIN`, `DATABASE_URL`, `DB_POOL_MAX` (1–20; default 5), `WORKER_CONCURRENCY` (1–4; default 2), `JOB_LEASE_SECONDS` (3–600; default 120), `AUTH_MODE`/`DRIVE_MODE` (only `unconfigured`). Migration CLI separately requires `MIGRATION_DATABASE_URL`. Remaining provider/product/telemetry keys below are not connected or validated yet. Both processes validate before traffic/work; build uses harmless valid URLs without connecting. Pools bound connection/statement/idle-transaction timeouts; replica sizing remains untested.
 
 | Variable | Sensitivity | Purpose |
 |---|---|---|
@@ -54,6 +56,8 @@ Validate required configuration at process startup; fail clearly before serving 
 8. Monitor error rate, queue age, inventory failures and mutation latency; halt rollout on regression. Record release outcome.
 
 Exact CLI/container/hosting commands belong in the implementation repository after DEC-003; do not treat invented commands in planning docs as executable deployment automation.
+
+BL-003 root README now owns exact **local** npm commands. CI installs pinned Node/npm/lockfile and runs type/unit/real-PG/build/smoke/docs checks on Windows; hosted execution is Not run. The development-only embedded PostgreSQL package is not a hosting choice. Source SQL is a separate release input, not run from HTTP or auto-applied by worker. Runtime compatibility is documented/tested in Database: retain additive schema during application rollback, require fenced level-2 workers, raise the floor deliberately for breaking changes. No destructive down migrations, hosted deployment, backup/restore drill or paid provisioning was performed. DEC-003 stays open.
 
 ## Health and alerting
 

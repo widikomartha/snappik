@@ -2,6 +2,10 @@
 
 Status: implementation controls and verification plan, not a security certification or legal opinion. Requirements: REQ-TEN-001, REQ-ACCESS-001, REQ-PRIV-001, REQ-RET-001 and REQ-OPS-001.
 
+BL-003 implements a provider-independent local foundation only. [Evidence](foundation/BL-003-EVIDENCE.md) verifies membership-scoped repositories, suspension denial, composite FKs, receipt/audit allowlists, immutable history, bounded retries and fencing on actual PostgreSQL. Auth always returns no principal; Drive and dispatcher handlers fail unconfigured. There are no protected business routes yet. A branded internal principal type is a compile-time boundary, not proof of a real session: BL-004 must supply durable verified-session checks and never accept client IDs as principals. Full security acceptance remains open.
+
+Runtime DB access is trusted service access with repository tenant predicates, not per-user credentials or RLS. [Foundation grants](../src/db/runtime-grants.sql) were tested with a non-owner/non-superuser role: permitted reads/locks/queue writes, denied DDL, membership identity edits, operator self-grants and history edits. They are not automatically applied and do not provision a deployed role. Local example credentials use a dedicated loopback synthetic cluster owner only for convenience. Shared runtime must use a separate constrained role, never MIGRATION_DATABASE_URL; future business/auth grants require review. Initial immutable audit delete trigger has no general bypass; retention cleanup is deferred.
+
 ## Trust boundaries
 
 Browsers and provider responses are untrusted. The server owns authorization, quota, time and confirmation state. Studio membership does not grant platform permission, and a gallery grant does not grant owner permission. Background jobs execute with a recorded studio/project scope. Private storage never grants access simply because an object key is known.

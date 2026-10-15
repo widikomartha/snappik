@@ -2,6 +2,8 @@
 
 Status: baseline HTTP contract for implementation; not an existing endpoint inventory. Prefix `/api/v1`. JSON UTF-8 unless explicitly CSV/binary. Internal IDs are UUIDs. Dates are RFC3339 UTC. Unknown fields are rejected on mutations.
 
+BL-003 inventory: only `GET /health/live` (200 `{status:"live"}`) and `GET /health/ready` (200 `{status:"ready"}` or 503 `{status:"unavailable"}`) exist outside the business prefix. Both are no-store and disclose no dependency details. Readiness checks database/schema compatibility, not auth/Drive/feature availability. All owner/client/operator business routes below remain contracts, not implemented APIs. No test-only authenticated HTTP path was added. [Foundation evidence](foundation/BL-003-EVIDENCE.md) maps the repository/transaction subset to T-002/T-004/T-017.
+
 ## Shared conventions
 
 - Owner/ops requests use server-validated secure session cookies. State changes require same-origin/CSRF protection.

@@ -39,6 +39,10 @@ Domain tests verify state rules. PostgreSQL integration tests verify actual cons
 | T-021 | Dashboard totals, selecting/confirmed filters and next-seven-day deadlines match DB after create/confirm/reopen/archive; polling timestamps reflect freshness | TRACK |
 | T-022 | Pilot load fixture: p95 save/confirm target, warm/cold gallery timings, memory/DB connection bounds and provider rate limiting reported | GAL, DL, OBS |
 
+## BL-003 local foundation subset — 15 October 2026
+
+[Foundation evidence](foundation/BL-003-EVIDENCE.md) records executed `npm run check`: 4 unit + 17 PostgreSQL 18.4 integration tests Passed, strict TypeScript and both builds Passed; `npm run test:smoke` verifies actual production process/CLI readiness. The harness creates a fresh isolated cluster, never resets a runtime URL. It tests scoped repository/FK denial (T-002 foundation), synthetic effect/job/audit/idempotency transaction/replay (T-004 foundation), real killed-process expiry/renewal/fencing/backoff/exhaustion (T-017 foundation), restricted role and migration compatibility. Complete HTTP/auth, quota and actual inventory/provider scenarios remain untested. This does not pass those full tests or implement adjacent backlog IDs.
+
 ## Critical race tests
 
 Use separate database connections and barriers to run competing operations; do not rely on timing-only sleeps. Test confirm vs save, confirm vs source removal publication, config quota reduction vs save, archive vs download authorization, restore vs purge and concurrent trial quota consumption. Allowed outcomes must follow the lock order and revision contract. Assert records, not merely response status.
