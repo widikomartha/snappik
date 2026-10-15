@@ -1,0 +1,10 @@
+{
+  "name": "snappik-bl001-auth-spike",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Isolated BL-001 feasibility spike; synthetic accounts and in-memory storage only",
+  "engines": { "node": ">=24.18.0 <25", "npm": "11.16.0" },
+  "scripts": { "test": "node --test --test-concurrency=1 *.test.mjs" },
+  "dependencies": { "better-auth": "1.7.9" }
+}

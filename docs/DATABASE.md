@@ -26,7 +26,7 @@ erDiagram
 
 | Table | Fields | Keys / rules |
 |---|---|---|
-| `users` | id, auth_provider, auth_subject, email_normalized, display_name, created_at, updated_at | Unique `(auth_provider, auth_subject)`; email is not identity or an automatic account-merge key; no password storage |
+| `users` | id, auth_provider, auth_subject, email_normalized, display_name, security_version, created_at, updated_at | Unique `(auth_provider, auth_subject)`; email nonunique metadata, never merge key; security_version >=1 invalidates older sessions; no password storage; candidate namespace mapping below |
 | `studios` | id, name optional until setup, slug optional until setup, revision, status (`setup_required/active/suspended`), provisioned_at, created_at, updated_at | Unique nonnull slug; active requires valid name/slug; revision >= 1; suspension action audited; reactivation derives setup_required/active from setup completeness |
 | `studio_members` | studio_id, user_id, role (`owner`), created_at | PK `(studio_id,user_id)`; unique studio_id and user_id for MVP; role CHECK owner; future staff requires migration |
 | `studio_settings` | studio_id, locale (`id/en`), timezone, revision, defaults_schema_version, project_defaults, created_at, updated_at | PK/FK studio_id; revision >= 1 for optimistic concurrency; defaults_schema_version identifies the defaults JSON schema; one row per studio; timezone validated against supported IANA zones |
@@ -96,3 +96,19 @@ Draft state/count/quota and confirmation transitions involve multiple rows, so u
 Archive is reversible. Purge checks archived timestamp, restore status and any retention hold inside a transaction before deleting project-owned data and queuing object deletion. Keep minimal redacted audit evidence only for the approved retention window. Never cascade into users/studios or upstream Drive files from project purge.
 
 Migrations are reviewed, forward-numbered and tested on production-like synthetic data. Add new columns nullable/backfill/validate before tightening constraints. Do not use destructive schema rollback as an ordinary release rollback. Future extra/print modes add workflow-specific tables and immutable base-confirmation references; do not overload filename arrays or arbitrary JSON for relational identities.
+
+## BL-001 candidate auth persistence boundary
+
+Logical requirements only, not migrations or PostgreSQL evidence. DEC-001 remains open; see [ADR-004](decisions/ADR-004-auth-session-feasibility.md) and [session contract](auth/SESSION_CONTRACT.md).
+
+For Better Auth candidate, auth_provider is `better-auth:<AUTH_INSTANCE_ID>` and auth_subject is the immutable library user UUID, not email or upstream OAuth account ID. Library account records connect several credentials to that user. Upstream linking must preserve that library user; it never merges app studios. Namespace changes require reviewed migration.
+
+Library-owned user/session/account/verification/twoFactor tables must be mapped to a separately restricted auth namespace without colliding with app users. Their exact fields/indexes come from the pinned library schema and reviewed adapter migrations. UUID generation is configured. Account password hashes, encrypted factor material, verification secrets and any retained provider tokens stay in that credential boundary, never app users or business DTOs. Raw library session tokens may be credential-bearing DB data; do not assume they are hashed because gallery token_hash is. Restrict database/backup access and review encryption. No live account tables exist yet.
+
+| Proposed table | Fields | Required constraints / semantics |
+|---|---|---|
+| `owner_session_security` | session_id, user_id, security_version, revoked_at optional, mfa_verified_at optional, mfa_method optional, created_at | PK/FK session_id to library session UUID, FK user_id to app users; bind same mapped subject server-side; version >=1; method/time both null or both present; method totp/backup_code; only fresh totp authorizes operator; cascade metadata on actual session deletion |
+
+Create metadata transactionally before business authorization, never restore a revoked row on retry. Session lookup requires row/version validity and denies at server_now >= expires_at. Missing metadata fails closed. Logout/all-device reset serialize on app user and persist revocation/version before acknowledging; library cleanup failure cannot undo durable denial. Recheck under that user lock before sensitive writes, followed by studio/project/set order. Factor recovery clears assurance and invalidates sessions. Never use a replica-stale read or in-memory tombstone to assert immediate revocation.
+
+Verify unique external account keys, mapping upsert, callback/link/reset consumption, metadata creation, logout race, cross-instance/restart denial and rollback on real PostgreSQL with separate connections. The memory adapter's tests establish no SQL constraint, transaction or race claim.

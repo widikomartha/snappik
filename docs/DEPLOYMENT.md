@@ -1,6 +1,6 @@
 # Deployment and operations
 
-Status: provider-neutral runbook. Hosting/auth/storage choices remain DEC-001/003. No live infrastructure, environment files or deployment scripts have been created by this documentation task.
+Status: provider-neutral runbook. Hosting/auth/storage remain gated by DEC-001/003. BL-001 has an isolated synthetic auth spike only; no live infrastructure, environment files or deployment scripts exist. The [candidate session configuration](auth/SESSION_CONTRACT.md) adds BETTER_AUTH_URL/SECRET(S), AUTH_INSTANCE_ID, restricted AUTH_DATABASE_URL and AUTH_MAIL_CONFIG_REF; these do not select hosting or authorize provider connection.
 
 ## Environments and release units
 

@@ -1,6 +1,6 @@
 # Test and release plan
 
-Status: planned; **none of these Snappik tests have been executed**. Fastpik live tests are research, not evidence that Snappik passes. Use deterministic clocks, synthetic Drive adapters and at least two tenants. Selected provider smoke tests run only against dedicated test accounts/folders.
+Status: application acceptance remains planned; **no full acceptance scenario is verified**. BL-001 executed a bounded synthetic subset, detailed below. Fastpik live tests are research, not evidence that Snappik passes. Use deterministic clocks, synthetic Drive adapters and at least two tenants. Selected provider smoke tests run only against dedicated test accounts/folders.
 
 ## Fixtures and levels
 
@@ -56,3 +56,11 @@ Current supported stable Chrome/Edge desktop, Firefox desktop and Safari desktop
 5. No real audit subject photos or Fastpik credentials in public assets, fixtures or logs.
 
 Performance targets are measured under the PRD fixture and deployment settings. Record failures honestly; do not relabel untested as passed. The docs-only validation checks links and traceability, not any runtime acceptance scenario.
+
+## BL-001 executable subset — 15 October 2026
+
+Run `npm --prefix spikes/bl001-auth test` from repository root. Actual Better Auth 1.7.9 handlers plus synthetic OAuth/mail/memory storage passed 18/18 checks. [Evidence](auth/BL-001-EVIDENCE.md) records exact commands, failures corrected, environment and limits; [candidate contract](auth/SESSION_CONTRACT.md) defines pending server/persistence obligations.
+
+T-001 subset covers credential login, callback/return/state/PKCE, expiry, logout/error and recovery. T-015 subset covers permission plus current-session TOTP, including OAuth bypass of the library's credential challenge. Neither full acceptance test is Passed. No browser/Next.js server, real provider/delivery, PostgreSQL constraints/races or operator business operations were exercised.
+
+For authorized integration, replay each synthetic scenario through the actual HTTPS callback and Next.js protected bookmark/API; use isolated verified accounts plus a real test authenticator and email inbox. Assert wrong issuer/audience/signature/nonce, expired/consumed code/state and denial on copied cookie after logout, restart and a second web process. With separate PostgreSQL connections/barriers, assert mapping/account uniqueness, competing link/reset and logout versus authorization. Preserve acknowledged records and fresh-reauth/MFA on recovery. Record build/config/schema and provider/environment, with sanitized results. Missing authorization/config remains Blocked, not Passed by the synthetic fixture.

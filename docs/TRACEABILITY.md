@@ -1,6 +1,6 @@
 # Requirements traceability
 
-Status: planning baseline. All rows are **not implemented / not tested**. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.
+Status: application requirements remain **not implemented / full acceptance not tested**. BL-001 has a verified synthetic auth subset documented in [evidence](auth/BL-001-EVIDENCE.md); this does not pass full T-001 or T-015. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.
 
 | Requirement | Business rule(s) | Backlog | Acceptance tests |
 |---|---|---|---|

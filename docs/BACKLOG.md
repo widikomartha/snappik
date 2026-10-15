@@ -1,6 +1,6 @@
 # Implementation backlog
 
-Status: all items **Todo**. Priorities: P0 foundation/release blocker, P1 core capability, P2 later enhancement. Sizes S/M/L are relative scope, not delivery estimates. Do not interpret this plan as completed application work.
+Status: **BL-001 In progress** (bounded synthetic spike verified; real-provider/deployment and durable-session evidence pending). All other items **Todo**. Priorities: P0 foundation/release blocker, P1 core capability, P2 later enhancement. Sizes S/M/L are relative scope, not delivery estimates. Do not interpret this plan as completed application work.
 
 ## Milestones
 
@@ -17,7 +17,7 @@ Status: all items **Todo**. Priorities: P0 foundation/release blocker, P1 core c
 
 | ID | Priority / size | Work | Dependencies | Acceptance / done evidence |
 |---|---|---|---|---|
-| BL-001 | P0 / M | Select auth/session provider; validate protected-route and operator-MFA design; record DEC-001 | None | Provider contract, callback/logout/recovery test spike and secret model; T-001 plan executable |
+| BL-001 | P0 / M | **In progress** — conditional Better Auth recommendation; identity/session contract and bounded spike | None | [ADR-004](decisions/ADR-004-auth-session-feasibility.md), [contract](auth/SESSION_CONTRACT.md), [evidence](auth/BL-001-EVIDENCE.md): 18/18 local synthetic checks Passed; T-001/T-015 full acceptance pending; DEC-001 open |
 | BL-002 | P0 / M | Prove Drive access and hosting/streaming/worker feasibility; close DEC-002/003 | None | Dedicated folder test with pagination, nesting, revoked access and quota behavior; no undocumented scraping |
 | BL-003 | P0 / L | Scaffold web/worker, migrations, scoped repository interfaces, audit/idempotency/jobs and CI | BL-001, BL-002 | Clean setup on empty database; migration/rollback strategy; transaction and lease tests; T-002/004/017 foundations |
 | BL-004 | P0 / M | Auth integration, tenant membership, idempotent provisioning and setup UI | BL-003 | Repeat/concurrent setup yields one studio/trial/defaults; protected access tests T-001/002/003 pass |

@@ -1,46 +1,39 @@
 # Project state
 
-Snapshot: 13 October 2026. Update this file when implementation state materially changes. Verify against the worktree at each session start.
-
-## Repository reality
+Snapshot: 15 October 2026. Starting local master / HEAD f669f52, initially clean. This snapshot accompanies the user-authorized BL-001 commit; resolve its SHA with git log. No push or deployment. Verify actual files/Git each session.
 
 | Area | State | Evidence / implication |
 |---|---|---|
-| Product documentation | Present | Main docs cover scope, business rules, architecture, data, API, UX, security, tests, backlog and operations |
-| Agent guidance | Present | This folder and root AGENTS.md provide execution context |
-| Competitor research | Present, private | Initial audit, live tests and local evidence; platform-admin logic is inferred |
-| Git | Initialized | Initial documentation commit `61aa720`; this is a historical reference, not a claim about current HEAD |
-| Application code / framework scaffold | Not created | No source tree, package manifest or dependency lockfile at this snapshot |
-| Runtime / package manager | Not selected | Do not assume an installed runtime or package manager version |
-| Auth / Drive / hosting | Open | DEC-001, DEC-002 and DEC-003 require implementation feasibility work |
-| Database / migrations | Logical design only | DATABASE.md is not executable DDL |
-| API / jobs | Contracts only | No deployed endpoints or worker |
-| Mockups / application UI | Specification only | Design tokens and page states are proposed; visual deliverables belong to BL-005 |
-| Tests / CI | Planned | T-001 through T-022 are acceptance definitions, not executed results |
-| Deployment / commercial billing | Absent | Provider-neutral runbook; paid billing is deferred |
+| Product and agent documentation | Present, updated for BL-001 | PRD/rules scope unchanged; API/Database/Security now carry candidate auth boundary |
+| Research | Present, private | Audit assets not used in spike/public fixtures |
+| Git | Initialized, master / f669f52 at inspection | BL-001 snapshot included in user-authorized commit; local workspace remains source of truth |
+| Application web/worker | Not scaffolded | No root application manifest/framework; isolated spike is not BL-003 |
+| Auth feasibility | BL-001 In progress; DEC-001 open | [ADR-004](../decisions/ADR-004-auth-session-feasibility.md): conditional Better Auth 1.7.9 + PostgreSQL recommendation, alternatives/costs, observed limitations |
+| Auth contract and executable spike | Synthetic subset verified | [Contract](../auth/SESSION_CONTRACT.md), [evidence](../auth/BL-001-EVIDENCE.md), [spike](../../spikes/bl001-auth/README.md); 18/18 local handler/policy checks, not full T-001/T-015 |
+| Runtime/package manager | Local spike only | Node 24.18.0, npm 11.16.0, PowerShell 7.6.5; exact isolated manifest/lockfile; production runtime/framework still unselected |
+| Real auth/email/operator recovery | Not connected/verified | Needs approved target topology/test accounts and explicit provider authorization; no secrets read |
+| Drive/hosting/storage | Open DEC-002/003 | Not implemented by this BL-001 session |
+| Database/migrations | Logical only | No DB connection, migration or PostgreSQL race evidence; owner-session security candidate added |
+| API/UI/jobs/CI | Contracts only | No app routes/UI or onboarding/operator implementation |
+| Acceptance | Planned | T-001/T-015 full scenarios not passed; other backlog items remain Todo |
+| Deployment/billing | Absent | No publish/provider purchase; deferred billing unchanged |
 
-At this snapshot the current task is documentation expansion only. All application backlog items remain Todo. Writing these guides does not complete BL-001 through BL-017.
+## Verified commands
 
-## Available operations
-
-From the repository root, read-only Git inspection works with `git status --short`, `git diff --stat` and `git log -1 --oneline`. Search using `rg` when available.
-
-Documentation checks are available through [validate-docs.ps1](../tools/validate-docs.ps1):
+From repository root:
 
 ```powershell
+npm --prefix spikes/bl001-auth test
+npm --prefix spikes/bl001-auth audit --omit=dev --json
 pwsh -NoProfile -File docs/tools/validate-docs.ps1
 ```
 
-This invocation was verified on the authoring environment. Legacy `powershell -File` was blocked by its local authorization policy; the installed `pwsh` invocation passed without changing policy. On other machines, use an available PowerShell runtime permitted by local policy. Do not change system execution policy to run this checker. If execution is blocked, report the limitation and perform equivalent read-only checks through the authorized shell.
+Executed spike test: 18/18 Passed, zero skipped. Registry audit: zero reported advisories at inspection, not a security certification. Final docs-check/diff evidence is in the active handoff. Test inputs/accounts/OAuth/email/storage are synthetic; no browser or real provider acceptance implied.
 
-No application install, dev, lint, typecheck, test, build, migration or seed command is available yet. After scaffolding, replace this statement with verified commands from the actual manifest and record runtime/package-manager versions. Do not tell users to run hypothetical scripts.
+Dependency installation actually used `npm install --prefix spikes/bl001-auth --ignore-scripts --no-fund --no-audit`. Fresh-checkout reproduction uses `npm --prefix spikes/bl001-auth ci --ignore-scripts --no-fund --no-audit` (documented, not executed this session). No root app dev/build/lint/typecheck/migration/seed command exists. Restricted sandbox Git may fail; approved local Git inspection succeeded without changing config. Writes/registry access required sandbox escalation.
 
-## Next useful work
+## Active work and first resume action
 
-When application work is requested, begin the feasibility/design stage described in [Implementation guide](IMPLEMENTATION_GUIDE.md): BL-001 for auth, BL-002 for Drive/hosting and BL-005 for UI flows. Independent design and domain-contract work can proceed while real provider access is unresolved.
+Read [active BL-001 handoff](handoff-2026-10-15-BL-001.md). First action in next BL-001 chat: inspect that handoff and current Git, then establish whether an approved deployment topology and authorized isolated IdP/email/PostgreSQL environment are available. Do not contact providers or request secret values in chat without authorization. Until available, the real-provider portion is blocked and DEC-001 remains open; the completed synthetic subset must not be relabeled production-ready.
 
-The product name is Snappik. Fastpik is the audited reference. Contact numbers are optional, stable file IDs are mandatory, and onboarding must initialize all required records. See the PRD for other deliberate differences.
-
-## Keeping state honest
-
-On meaningful implementation progress, update the affected component rows, actual commands, decision status and backlog evidence together. Link a concrete handoff if work is incomplete. Remove obsolete blockers when resolved. Do not store session credentials, live bearer links, machine-specific secret paths or unverifiable completion percentages here.
+Remaining: durable shared revocation and identity/account races on PostgreSQL; actual callback/email/TOTP recovery smoke through the selected Next.js/hosting topology; framework/driver version compatibility and credential resource/throttling review. BL-002/003/004/014 were not executed. Other independent backlog work requires its own scoped chat.

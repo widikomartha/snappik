@@ -5,12 +5,13 @@ The following ADRs establish the documentation baseline. They record chosen desi
 - [ADR-001: modular monolith](ADR-001-modular-monolith.md)
 - [ADR-002: stable photo identity and versioned confirmation](ADR-002-photo-identity-and-confirmation.md)
 - [ADR-003: phased MVP and independent access states](ADR-003-mvp-and-access-policy.md)
+- [ADR-004: auth/session feasibility for DEC-001](ADR-004-auth-session-feasibility.md) — conditional Better Auth recommendation; decision remains open
 
 ## Open decision register
 
 | ID | Decision | Default direction / question | Blocks | Closure evidence |
 |---|---|---|---|---|
-| DEC-001 | Auth provider and session strategy | Maintained provider/library, email/password or provider flow, verified linking, owner recovery and operator MFA; compare actual deployment constraints | BL-003/004 production auth | Chosen provider, callback/session/logout tests, hashing responsibility, secrets and cost recorded |
+| DEC-001 | Auth provider and session strategy | Open: conditional Better Auth/PostgreSQL recommendation in [ADR-004](ADR-004-auth-session-feasibility.md); 18 synthetic library/policy checks passed; no real provider/hosting validation | BL-003/004 production auth | Final provider/deployment fit, authorized callback/email/MFA smoke and durable PostgreSQL revocation/races; hashing, secrets and costs recorded in ADR-004 |
 | DEC-002 | Drive access/credential model | Prove support for submitted folders through documented APIs; API-key/public versus studio OAuth access must be decided by spike, not guessed | BL-007 provider implementation | Test public/private/shared types, resource keys, nesting, pagination, permission loss, quotas and permitted cache use |
 | DEC-003 | Hosting, DB and private object storage | Must support web, worker, streaming and region/backup requirements within a budget | BL-003 operational setup, BL-013, BL-017 | Provider choice, region, backup/restore capability, streaming/timeouts, costs and deployment commands |
 | DEC-004 | Commercial plan/prices/payment provider | Invitation-only trial/manual grants for MVP; competitor pricing is not Snappik pricing | BL-104; public paid launch | Product owner approved plans, renewal/refund rules, provider sandbox and reconciliation contract |

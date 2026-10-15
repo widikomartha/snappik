@@ -39,7 +39,7 @@ Status: baseline HTTP contract for implementation; not an existing endpoint inve
 | GET `/dashboard` | Totals, deadline summaries, pending/confirmed counts, generated_at | TRACK |
 | GET `/jobs/:id` | Tenant-owned sanitized state, progress and safe error code | OBS |
 
-Auth login/logout/recovery/callback endpoints are delegated to the provider selected by DEC-001; do not implement custom password endpoints from this table. Operator bootstrap and user invitation APIs are not public MVP endpoints.
+Auth login/logout/recovery/callback endpoints remain library-delegated, outside the business prefix. DEC-001 is open; the Better Auth candidate is specified below and in the [session contract](auth/SESSION_CONTRACT.md). Do not add custom password endpoints. Operator bootstrap and user invitation APIs are not public MVP endpoints.
 
 Example creation request:
 
@@ -113,3 +113,22 @@ Operator reasons: 10–1,000 characters; fixed UTC grant dates; initial manual g
 Do not map unknown backend errors to success or leak SQL/provider responses. Every error carries a request ID. Archive/restore and access rotation are naturally idempotent only for matching revisions; repeated requests after uncertain responses should fetch state before retrying.
 
 Future payments, integration keys, staff invitations, print/extra and ZIP endpoints are intentionally absent; add them with their own contracts and threat review.
+
+## BL-001 candidate auth boundary (not implemented routes)
+
+Candidate Better Auth mount `/api/auth/*` is separate from `/api/v1`. Endpoint names/shapes below were exercised through the isolated library handler, not deployed or integrated with Next.js. Production must wrap sensitive handlers with the [session contract](auth/SESSION_CONTRACT.md), durable revocation, CSRF and response redaction. Do not expose raw library tokens/account records through business DTOs.
+
+| Method / absolute path | Candidate behavior |
+|---|---|
+| POST `/api/auth/sign-up/email` | Library credential signup; verified email required before owner business access; no auto-login/provisioning claim |
+| POST `/api/auth/sign-in/email` | Library credentials; may return twoFactorRedirect rather than a session; never treat that challenge as authenticated |
+| POST `/api/auth/sign-in/social` | Server-approved provider; sanitized callbackURL from protected state, fixed error/new-user destinations; no arbitrary origin |
+| GET `/api/auth/callback/:providerId` | Exact registered callback; library validates browser-bound state/PKCE and approved provider proof; safe owner return path; failures return safe login state |
+| POST `/api/auth/sign-out` | Wrapper commits durable revocation, clears MFA, performs library cleanup; success requires certain revocation; storage failure 503 even if raw library says success |
+| POST `/api/auth/request-password-reset` | Library reset delivery request; fixed recovery destination; generic known/unknown result; throttled |
+| POST `/api/auth/reset-password` | Single-use expiring library token; revoke all sessions, no automatic login/MFA reset |
+| POST `/api/auth/two-factor/verify-totp` | Current challenge/session; server binds successful TOTP to resulting session; operator trusted-device bypass denied |
+
+Library helper/account-management endpoints are not automatically authorized product APIs. Keep linking, factor disable/replacement and other unused sensitive handlers inaccessible until explicit policy wrappers are verified. Provider recovery/verification handlers retain their native wire contract.
+
+Owner API session errors: 401 AUTH_REQUIRED for invalid/expired/unverified sessions; 503 TEMPORARILY_UNAVAILABLE for unverifiable storage; 403 SETUP_REQUIRED for a business route without complete membership/setup. GET /me may instead report setup_required. Operator guards add 403 PERMISSION_DENIED or MFA_REQUIRED without exposing gallery contents. Protected responses are no-store. Reauthentication never silently replays a business mutation with a substituted revision; retrieve canonical state and preserve pending intent.

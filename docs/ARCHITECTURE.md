@@ -1,6 +1,6 @@
 # Architecture
 
-Status: target design; no application code exists yet. Related: [ADR-001](decisions/ADR-001-modular-monolith.md), [Database](DATABASE.md), [API](API.md).
+Status: target design; no application scaffold exists. BL-001 adds only an isolated synthetic [auth spike](../spikes/bl001-auth/README.md). Related: [ADR-001](decisions/ADR-001-modular-monolith.md), [Database](DATABASE.md), [API](API.md).
 
 ## Baseline stack and unresolved providers
 
@@ -8,7 +8,7 @@ Status: target design; no application code exists yet. Related: [ADR-001](decisi
 |---|---|---|
 | Web and API | TypeScript, Next.js; same-origin browser/API deployment | Baseline; pin supported versions when scaffolding |
 | Persistence | PostgreSQL with explicit migrations and transactions | Baseline; managed host undecided |
-| Authentication | Maintained auth provider/library, server-validated sessions | DEC-001: provider/session contract pending |
+| Authentication | Conditional Better Auth/PostgreSQL server-session candidate | DEC-001 open; [ADR-004](decisions/ADR-004-auth-session-feasibility.md) and [candidate contract](auth/SESSION_CONTRACT.md); synthetic evidence only |
 | Source inventory | Google Drive adapter using supported APIs | DEC-002: public-link credential/access feasibility spike required |
 | Async work | PostgreSQL-backed jobs, worker from the same repository | Baseline; no separate Redis requirement for MVP |
 | Derived assets | Private object storage plus controlled media endpoint | DEC-003: provider/hosting pending |

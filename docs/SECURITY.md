@@ -66,3 +66,11 @@ Before public launch, DEC-006 must approve policy text, data processors, retenti
 Detect/triage → restrict affected access without erasing evidence → identify tenants and exposure window → preserve sanitized audit trail → rotate affected secrets and invalidate sessions as needed → remediate → validate isolation/recovery → notify according to reviewed obligations → document corrective actions. No notification timing or jurisdiction-specific legal claim is assumed here.
 
 Record severity, owner, timestamps and recovery evidence. Database or backup access is operational privileged access, not an ordinary platform UI permission.
+
+## BL-001 candidate owner/operator session controls
+
+DEC-001 remains open. [ADR-004](decisions/ADR-004-auth-session-feasibility.md) compares current official approaches; [session contract](auth/SESSION_CONTRACT.md) defines namespace/subject identity, explicit verified linking, one-hour fixed DB sessions, safe returns, recovery and per-session operator TOTP. [Evidence](auth/BL-001-EVIDENCE.md) is synthetic only.
+
+Do not use email to merge identities, cookie presence to authorize, enrollment flags to prove current MFA, or a library logout success body to prove revocation. The spike observed expiry equality accepted and deletion failure swallowed by Better Auth 1.7.9; production guards need explicit expiry and shared durable revocation checks. OAuth does not automatically receive the credential 2FA challenge. Every operator service therefore requires current explicit permission and session-bound TOTP less than 15 minutes old. Backup-code/email recovery alone cannot grant ops access.
+
+Self-hosted library account tables own password hashes and credential operations; app users remain password-free. No app-owned account hashing was added. Shared throttling, credential-resource benchmark, actual recovery delivery, authenticator drill and real PostgreSQL revocation remain unverified. These candidate controls do not certify production auth.
