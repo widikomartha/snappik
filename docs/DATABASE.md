@@ -51,6 +51,14 @@ BL-004 implements this app-side transaction in [service](../src/modules/onboardi
 
 Only a completed generation marks unseen photos `available=false`. Failed scans leave the last successful availability view intact. Folder path is descriptive metadata; folder identities may be stored in inventory job progress for traversal, not used as photo identity.
 
+### DEC-002 pending credential persistence
+
+Design only, paired with [API](API.md), [ADR-007](decisions/ADR-007-drive-source-credentials.md) and the [candidate lifecycle](drive/ADAPTER_CONTRACT.md); no table/column/migration added. Existing 001/002 source columns are insufficient for credentials/resource keys. Candidate `drive_connections` records need studio ownership, explicit mode, stable provider subject and project/client config reference, granted scopes, status, monotonic connection version, expiry/validation/revocation timestamps and encrypted refresh-secret reference/key version. Never use email as identity or add raw token columns to project/selection/job/audit payloads.
+
+Candidate `projects.drive_connection_id` requires composite FK `(studio_id,drive_connection_id)` to the same studio; root resource key needs encrypted private storage scoped to project. Private per-file keys and root-relative folder-ID ancestry need a scoped side table/reference for traversal/media revalidation, not plaintext confirmation snapshots. Preserve current unique `(project_id,provider_file_id)` and original name/path/version. No key/credential is exported. The candidate API resource-key bound (1–200 safe ASCII characters) is application validation, not a Google length guarantee.
+
+Disconnect transaction increments connection version, disables operational use and writes revocation/cache-cleanup work atomically; active workers must recheck/fence connection plus project config/generation before publication and before new media reads. Lock connection before project then selection set where needed; perform no provider I/O under these locks and review every reconnect/refresh/publish path. Refresh CAS/lease prevents a late response from resurrecting a disconnected connection. Jobs carry scoped connection/version references only. Revocation-only encrypted material has a bounded separate lifecycle/deletion deadline; backup restore must reapply later revocation/deletion before use. Exact schema/grants/retention/race tests await approved mode/tooling and provider evidence; no new persistence claim is made.
+
 ## Selection and gallery access
 
 | Table | Fields | Keys / rules |

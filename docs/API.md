@@ -69,6 +69,14 @@ Optional per-workflow `password` is write-only; null clears it explicitly, omiss
 
 Creation returns `{data:{id,revision,public_url,inventory_status:"pending",job_id}}`. Image/source validation failures occurring asynchronously are shown through job/project state, not rolled back by fabricating a failed create response.
 
+### DEC-002 pending source extension
+
+Design only, paired with [Database](DATABASE.md) and the [credential lifecycle](drive/ADAPTER_CONTRACT.md); not accepted fields or implemented routes. [ADR-007](decisions/ADR-007-drive-source-credentials.md) conditionally prefers studio OAuth; production choice remains open. Current creation schema still contains only `drive_folder_id` for the source and cannot preserve resource keys or choose credentials.
+
+Candidate additions are `drive_connection_id` (internal UUID, resolved under current studio membership) and optional write-only `drive_resource_key` (ASCII letters/digits/underscore/hyphen, 1–200 characters when present; candidate application bound pending fixture validation). Canonical folder/file IDs follow the adapter's bounded lexical validation plus fresh provider validation. The UI must preserve an optional key from a recognized Drive link; it must not fetch the URL. Unknown hosts, duplicate/ambiguous parameters, shortcut/non-folder roots and failed provider validation are errors. These additions must not be sent until a reviewed paired schema/route change lands. No OAuth token, API key, client secret or arbitrary source URL is accepted in project JSON.
+
+Connection initiation/callback/status/disconnect need a separately reviewed owner-only contract with session/CSRF, same-studio reference checks, single-use OAuth state and idempotent disconnect; paths/DTOs are not established here. Status may expose safe readiness/reconnect/revocation-pending information, never secret material. Disconnect must remain possible when entitlement expires and immediately deny new source/cache reads locally; do not label provider revoke complete before observed completion. Google account revocation may affect other grants under the same project. Root/credential replacement with existing choices cannot bypass BR-CONF-004; reconnect requires explicit principal confirmation and fresh validation. Gallery contracts never expose connection/provider IDs, resource keys or source links.
+
 ## Client endpoints
 
 | Method / path | Contract / policy |

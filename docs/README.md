@@ -55,6 +55,8 @@ Baseline technical shape: TypeScript web application, Next.js presentation/API l
 
 Executed feasibility subsets: [BL-001 auth](auth/BL-001-EVIDENCE.md) and [BL-002 Drive/hosting](drive/BL-002-EVIDENCE.md). These isolated spikes do not scaffold the application or close their provider gates.
 
+Current DEC-002 [research/closure ledger](drive/DEC-002-EVIDENCE-2026-10-18.md) and [ADR-007](decisions/ADR-007-drive-source-credentials.md) supplement the Drive access recommendation and candidate credential design. No live provider test or approved production choice; use the [18 October handoff](agents/handoff-2026-10-18-DEC-002.md) for the next source-access investigation.
+
 BL-004 [onboarding evidence](auth/BL-004-EVIDENCE.md) and [active handoff](agents/handoff-2026-10-15-BL-004.md) record implemented PostgreSQL provisioning/setup, fail-closed owner APIs and setup/access pages. Synthetic server sessions verify only the app-side subset; real login/logout/recovery remain gated by DEC-001.
 
 Completed design/prototype deliverable: [BL-005 wireframes](../prototypes/bl005-ux/README.md), [tokens/components/states](design/BL-005-UX.md), [browser review evidence](design/BL-005-EVIDENCE.md). This separate, synthetic, memory-only prototype does not implement application routes, server authorization or persistence and does not pass full T-006/T-016.

@@ -81,6 +81,10 @@ Run `npm --prefix spikes/bl002-drive test` from repository root (Node built-ins 
 
 T-005/T-013/T-017/T-022 remain unverified in full. No real Drive folder/account, OAuth/API key, web proxy, worker, PostgreSQL lease/publication race, production decoder, private bucket, backup restore, browser or PRD pilot load was tested. Dedicated folders are unavailable by user confirmation. DEC-002/003 stay open; do not turn synthetic rate errors or a local disk sample into provider/load acceptance.
 
+## DEC-002 investigation follow-up — 18 October 2026
+
+DEC-002 follow-up (18 October): [current evidence/protocol](drive/DEC-002-EVIDENCE-2026-10-18.md) refreshes official documentation and identifies a T-005 false-empty risk: metadata-visible limited-access folder with `canListChildren=false`. Require denied/unknown folder capability to fail without publishing/tombstoning old inventory. Add dedicated real root/child keys, existing/new descendants under each scope, forced pagination, Shared Drive versus shared My Drive, revoked ACL/consent/refresh and moved-out source denial. T-013 additionally needs real valid bytes, limits/version/cancellation and recorded cache directives/approved use. Credential refresh/disconnect/reconnect races and scoped reference substitution must be verified at integration. These are **planned**, not new passing tests; user confirmed no dedicated assets/configuration. Historical 29-case suite was not rerun for document-only research; full acceptance remains incomplete.
+
 ## BL-005 design/prototype subset — 15 October 2026
 
 Run `npm --prefix prototypes/bl005-ux run check` and `npm --prefix prototypes/bl005-ux test`. Ten local design checks Passed; [evidence](design/BL-005-EVIDENCE.md) records executed browser review and remaining limits. [Prototype README](../prototypes/bl005-ux/README.md) gives reproducible review steps; [UX specification](design/BL-005-UX.md) defines tokens and component behavior.

@@ -1,5 +1,15 @@
 # Project state
 
+## DEC-002 investigation update — 18 October 2026
+
+Verified actual startup: clean local `master` / HEAD `10d4d1d48ad18c3b3f31ddb987e8dc13a100d542`; existing app/dependencies preserved. [ADR-007](../decisions/ADR-007-drive-source-credentials.md) supplements ADR-005 for DEC-002 only: preferred conditional studio OAuth `drive.readonly`, first test narrower `drive.file` adequacy; public API key is a conditional public-only fallback. **DEC-002 OPEN/PARTIALLY VALIDATED; BL-002 In progress; BL-007 Todo; no approved production Drive decision.** DEC-003 unchanged.
+
+[Current evidence/closure ledger](../drive/DEC-002-EVIDENCE-2026-10-18.md): refreshed official access/scope/key/list/Shared Drive/quota/token/cache documentation; user confirmed no dedicated synthetic Drive assets/configuration in this chat. No live API/credential connection. The historical 29 offline checks were not repeated for document-only changes. New finding: metadata-visible limited-access folders may list empty while `canListChildren=false`; existing descriptors omit that check. Seven-day cache retention is not provider permission. Every direct-provider closure row remains blocked.
+
+Candidate credential lifecycle, paired pending API/Database fields and Security/Architecture/Test Plan notes documented; no route, migration, dependency or runtime adapter changed. Drive remains unconfigured. No install/build/application tests, commit/push/deployment/paid provisioning. Documentation/diff verification and exact resume step: [DEC-002 handoff](handoff-2026-10-18-DEC-002.md). It supersedes the DEC-002 resume instructions in the earlier BL-002 handoff; that handoff retains DEC-003 context. Existing DEC-001 and BL-004 handoffs remain active for their separate scopes.
+
+Next DEC-002 chat: verify Git/state, then establish explicit authorization and dedicated fixture/config references; execute the bounded public metadata/list/media/private-negative pass before the remaining scope/key/visibility/revocation/quota/cache matrix. No credentials in chat and no provider connection inferred from this handoff. Until available, independent safe work is contract review and synthetic capability/refresh/fencing implementation if separately requested; it cannot close the provider gate.
+
 ## DEC-001 investigation update — 18 October 2026
 
 Verified startup: clean local `master` / HEAD `5a00473`; app/dependencies remain the BL-004 implementation below. [ADR-006](../decisions/ADR-006-auth-session-postgres-validation.md) supplements ADR-004, retaining conditional Better Auth/PostgreSQL and Auth0 fallback. **DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress; no approved production auth decision.**

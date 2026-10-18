@@ -54,6 +54,10 @@ Use at least Argon2id or another reviewed provider/library-supported password ha
 
 ## Data minimization and disclosure
 
+DEC-002 remains open. [ADR-007](decisions/ADR-007-drive-source-credentials.md) and the [candidate credential lifecycle](drive/ADAPTER_CONTRACT.md) require separate Drive consent, tenant-scoped connection/root checks, encrypted managed secret references, refresh/disconnect fencing and safe reconnect. No such credential implementation is present. Never accept a connection ID as authorization, expose resource keys/tokens to clients, or fall back to a broader scope/identity after a denial. Separate Drive/login Google projects are proposed because provider revocation can invalidate the user's scopes across clients within one project; this isolation is untested.
+
+Metadata-visible folders can deny child listing while returning an empty result. Require fresh `capabilities.canListChildren` for root and visited folders; missing/false capability or unvalidated source type fails the scan before publication. Original delivery requires fresh download permission plus current ancestry under the bound root. Cached bytes never authorize access after local disconnect. [Current evidence](drive/DEC-002-EVIDENCE-2026-10-18.md) records missing direct provider tests, cache directives and policy approval; BR-RET-002's seven-day cache proposal alone does not authorize retention or derivatives/client transfer. Review source-derived confirmation metadata separately while preserving acknowledged history under the existing contract.
+
 - Owner payloads may contain their own source IDs and contacts; gallery bootstrap must not.
 - Public gallery responses carry only authorized photo references/labels and necessary access state. Provider file IDs remain internal except owner exports.
 - Full-image delivery may expose photo bytes to the authorized recipient; the service cannot prevent screenshots or copying after delivery.
