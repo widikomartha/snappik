@@ -67,6 +67,8 @@ Metadata-visible folders can deny child listing while returning an empty result.
 
 ## Deletion, retention and backups
 
+DEC-003's [candidate controls](hosting/CONFIGURATION_CONTRACT.md) require separate runtime/migration/backup/restore identities and private regional derived/backup buckets; no such provider roles or bucket settings exist yet. [Current official research](hosting/DEC-003-EVIDENCE-2026-10-18.md) identifies provider HTTP **path logging** as a possible gallery-token disclosure: application JSON redaction does not suppress edge logs. Verify provider suppression/redaction or an explicitly reviewed mitigation before production; no URL/API change is approved here. Backups need separately retained post-snapshot revocation/deletion evidence, encryption-key recovery and reconciliation before galleries reopen; restoring the same old audit table cannot recover newer events. Neither the local transport spike nor a successful thumbnail proves IAM, decoder isolation or restore safety.
+
 Follow BR-RET-001/002. Logical deletion immediately stops application access; physical object/database purge runs after the restore window. Backups expire by the documented schedule and may retain previously deleted records until then. A recovery runbook must reapply deletion/revocation events newer than the backup before reopening service.
 
 Before public launch, DEC-006 must approve policy text, data processors, retention basis, deletion/export request verification and support contact. An operator must not delete data solely because an unauthenticated message claims ownership. Use synthetic data in development/staging and redact fixtures copied from production.

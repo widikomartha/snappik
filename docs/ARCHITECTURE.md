@@ -11,10 +11,12 @@ Status: target design with a verified provider-independent BL-003 foundation and
 | Authentication | Conditional Better Auth/PostgreSQL server-session candidate; Auth0 managed fallback | DEC-001 OPEN/PARTIALLY VALIDATED; [ADR-006](decisions/ADR-006-auth-session-postgres-validation.md) supplements ADR-004; 18 memory + 5 real local PG checks with synthetic identities/mail, no Next auth integration/live provider; durable app guard and schema gaps remain |
 | Source inventory | Google Drive adapter using supported APIs | DEC-002 OPEN/PARTIALLY VALIDATED: [ADR-007](decisions/ADR-007-drive-source-credentials.md), conditional studio OAuth with public-only fallback; [candidate contract](drive/ADAPTER_CONTRACT.md), 29 historical synthetic checks; live evidence and approved scope/cache policy pending |
 | Async work | PostgreSQL-backed jobs, worker from the same repository | Local claim/lease/fencing/retry infrastructure verified; all real handlers explicitly unconfigured; no Redis |
-| Derived assets | Private object storage plus controlled media endpoint | DEC-003 open: [conditional hosting proposal](decisions/ADR-005-drive-hosting-feasibility.md); no provider infrastructure verified |
+| Derived assets | Private object storage plus controlled media endpoint | DEC-003 OPEN/PARTIALLY VALIDATED: [ADR-008](decisions/ADR-008-hosting-postgres-private-storage.md), conditional Render Singapore web/worker/PG18 + private S3 Singapore, R2/Railway alternatives; no provider infrastructure verified |
 | Operations | Structured logs, counters, error reporting, health checks | Baseline; vendor undecided |
 
 Do not infer this stack from the competitor's dependency versions. Framework/hosting selection must support server-side authorization, streaming, background workers and secret management.
+
+DEC-003's [current evidence](hosting/DEC-003-EVIDENCE-2026-10-18.md) and [candidate environment/release contract](hosting/CONFIGURATION_CONTRACT.md) supplement ADR-005's historical hosting proposal. Five local real-socket HTTP checks and two valid-image decoder cases are distinct from provider proof. Same-artifact web/worker, separately authorized migrator, source SQL packaging, role/pool budgets and private derived storage remain the target. No production topology is approved: owner budget/location unset; hosted proxy/worker/Linux/native/TLS/IAM/backup/logging remain unverified. No API/schema/eligibility change; the 40 MP spike parameter is not a product limit.
 
 ## Components
 

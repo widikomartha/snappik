@@ -8,6 +8,8 @@ BL-003 [foundation evidence](foundation/BL-003-EVIDENCE.md) verifies REQ-TEN-001
 
 DEC-001 [18 October follow-up](auth/DEC-001-EVIDENCE-2026-10-18.md) adds 5 real local PG checks to the 18 memory checks. Native logout failure and account-pair uniqueness gaps are reproduced; OAuth/mail and business scope stay synthetic. This expands REQ-AUTH-001 investigation evidence only; production T-001 and associated T-002/T-003/T-015 remain incomplete. [ADR-006](decisions/ADR-006-auth-session-postgres-validation.md) records the conditional recommendation and open closure gates.
 
+DEC-003 [current evidence](hosting/DEC-003-EVIDENCE-2026-10-18.md) / [ADR-008](decisions/ADR-008-hosting-postgres-private-storage.md): REQ-DL-001 / BR-DL-001 and BR-DRIVE-001 gain five local HTTP transport/cancel/cleanup checks; REQ-GAL-001 has two native decoder experiment cases only. REQ-REL-001 / BR-REL-002 retains historical local PG lease evidence, with no new hosted proof. REQ-OBS-001 and REQ-RET-001 / BR-RET-002 remain gated by provider logs, private-object and 30-day restore/revocation tests. T-013/T-017/T-020/T-022 incomplete; BL-002/003 In progress, BL-013/017 Todo. No provider closure or new product pixel limit.
+
 | Requirement | Business rule(s) | Backlog | Acceptance tests |
 |---|---|---|---|
 | REQ-AUTH-001 | BR-TEN-001, BR-ONB-001 | BL-001, BL-004 | T-001 |

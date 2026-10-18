@@ -1,5 +1,17 @@
 # Project state
 
+## DEC-003 investigation update — 18 October 2026
+
+Verified actual startup: clean local `master` / HEAD `eb359d0889848a907fe18e9c89f782165cb5292f`; actual app/build/dependencies inspected and preserved. [ADR-008](../decisions/ADR-008-hosting-postgres-private-storage.md) supplements ADR-005 for DEC-003 only: conditional Render Singapore web/worker/PG18 + private S3 Singapore; R2 location-conditional storage and Railway hosting fallbacks. **DEC-003 OPEN/PARTIALLY VALIDATED; BL-002/003 In progress; BL-013/017 Todo; no approved production provider.** Owner confirms monthly budget and location requirements not established. DEC-001/002 unchanged.
+
+[Current evidence/closure ledger](../hosting/DEC-003-EVIDENCE-2026-10-18.md) adds five real loopback HTTP checks (50 MiB exact bytes, upstream overflow/deadline, pre-header/downstream cancellation, scratch cleanup) and two native sharp 0.35.5/libvips 8.18.7 cases (valid 24 MP PNG resize; 48 MP rejected at experimental 40 MP). These are Windows/local results, no Next/provider/private-object/restore/load proof or new product image limit. Initial sandbox loopback EACCES failed; permitted loopback rerun Passed. Existing local PG lease/worker evidence was reused without rerunning unchanged suites.
+
+[Candidate environment/release contract](../hosting/CONFIGURATION_CONTRACT.md) separates actual validated keys from proposals, runtime/DDL/backup identities and source SQL packaging. Compatibility findings: root start binds loopback; Linux/native/TLS untested; provider HTTP logs capture paths and require token suppression proof; managed short backup windows need independent 30-day retention and newer revocation/deletion replay before recovery access. pg_dump/pg_restore absent from PATH and bundled server, no restore attempted. Public USD arithmetic sourced, regional checkout/complete cost unverified.
+
+No app/runtime/schema/dependency change, install, build, full PG test rerun, provider connection, paid provisioning, deployment, commit or push. Final docs/syntax/diff checks and exact resume step: [DEC-003 handoff](handoff-2026-10-18-DEC-003.md). This supersedes only DEC-003 resume guidance in the earlier BL-002 handoff; its historical evidence and other active scopes remain valid.
+
+Next DEC-003 chat: inspect Git/this ledger, resolve owner budget/location and a bounded synthetic sandbox quote/authorization, then prepare the allowlisted Linux artifact and test actual proxy/logging/IAM/worker/restore matrix. No direct provider action is authorized by this handoff. Independent safe work: reviewed packaging/recovery-tooling preparation when requested; it cannot close a provider gate.
+
 ## DEC-002 investigation update — 18 October 2026
 
 Verified actual startup: clean local `master` / HEAD `10d4d1d48ad18c3b3f31ddb987e8dc13a100d542`; existing app/dependencies preserved. [ADR-007](../decisions/ADR-007-drive-source-credentials.md) supplements ADR-005 for DEC-002 only: preferred conditional studio OAuth `drive.readonly`, first test narrower `drive.file` adequacy; public API key is a conditional public-only fallback. **DEC-002 OPEN/PARTIALLY VALIDATED; BL-002 In progress; BL-007 Todo; no approved production Drive decision.** DEC-003 unchanged.

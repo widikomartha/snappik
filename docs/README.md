@@ -63,6 +63,8 @@ Completed design/prototype deliverable: [BL-005 wireframes](../prototypes/bl005-
 
 ## Document maintenance
 
+Current DEC-003 [hosting investigation/closure ledger](hosting/DEC-003-EVIDENCE-2026-10-18.md), [configuration contract](hosting/CONFIGURATION_CONTRACT.md), [ADR-008](decisions/ADR-008-hosting-postgres-private-storage.md) and [handoff](agents/handoff-2026-10-18-DEC-003.md) record local transport/decoder results and conditional Render/S3 direction. No approved production choice, target deployment or restore evidence; budget/location unset.
+
 Requirement IDs (`REQ-*`) are stable. `BR-*` identifies business rules, `BL-*` backlog work, `T-*` tests, and `DEC-*` open decisions. Changes to a requirement must update its rule, API/schema/design impact and traceability row. Mark work Done only with item-level evidence; BL-001/002/003 are In progress, BL-005 is Done for design/prototype only, and other implementation items remain Todo.
 
 Business rules take precedence for behavior; PRD owns scope; API owns wire contracts; Database owns persistence. Resolve contradictions by updating all affected files rather than duplicating a new rule elsewhere. Dates in records use UTC; UI localizes them using studio/browser preferences.
