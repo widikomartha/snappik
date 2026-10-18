@@ -6,6 +6,8 @@ BL-005 is Done for the design/prototype deliverable: [UX specification](design/B
 
 BL-003 [foundation evidence](foundation/BL-003-EVIDENCE.md) verifies REQ-TEN-001 / BR-TEN-001 scoped persistence and REQ-REL-001 / BR-REL-001/002 atomic retry/queue foundations on actual PostgreSQL. T-002/T-004/T-017 remain incomplete as full product scenarios: real auth, HTTP permissions, project quota and actual inventory/provider behavior remain in their owning backlog items. BL-003 is In progress for gated operational/provider-schema work; isolated PG evidence does not close DEC-001/002/003.
 
+DEC-001 [18 October follow-up](auth/DEC-001-EVIDENCE-2026-10-18.md) adds 5 real local PG checks to the 18 memory checks. Native logout failure and account-pair uniqueness gaps are reproduced; OAuth/mail and business scope stay synthetic. This expands REQ-AUTH-001 investigation evidence only; production T-001 and associated T-002/T-003/T-015 remain incomplete. [ADR-006](decisions/ADR-006-auth-session-postgres-validation.md) records the conditional recommendation and open closure gates.
+
 | Requirement | Business rule(s) | Backlog | Acceptance tests |
 |---|---|---|---|
 | REQ-AUTH-001 | BR-TEN-001, BR-ONB-001 | BL-001, BL-004 | T-001 |

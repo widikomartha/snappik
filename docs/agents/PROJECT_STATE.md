@@ -1,5 +1,17 @@
 # Project state
 
+## DEC-001 investigation update — 18 October 2026
+
+Verified startup: clean local `master` / HEAD `5a00473`; app/dependencies remain the BL-004 implementation below. [ADR-006](../decisions/ADR-006-auth-session-postgres-validation.md) supplements ADR-004, retaining conditional Better Auth/PostgreSQL and Auth0 fallback. **DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress; no approved production auth decision.**
+
+[Current evidence](../auth/DEC-001-EVIDENCE-2026-10-18.md): memory tests rerun 18/18; new real PG 18.4 suite 5/5 with native library sessions/callback/logout/reset across instances/processes, DB restart and synchronized reset consumption. OAuth/profile/mail/protected business scope remain synthetic. Raw logout returns 200 on failed deletion; generated account schema accepts duplicate provider/subject pairs until a spike-only index. Passing finding tests do not meet those production requirements. Runtime auth remains unavailable; no app auth schema/route added.
+
+Official capabilities/public prices refreshed, version drift recorded (tested 1.7.9, official 1.7.10 not tested); no package install/upgrade. Targeted spike TypeScript passed. Next/browser auth, signed provider callback/delivered recovery, app revocation/operator assurance, production auth grants and budget/host/hash/rotation validation remain open. No commit/push/deployment/paid provisioning/live connection. Use [DEC-001 handoff](handoff-2026-10-18-DEC-001.md) for this investigation; BL-004 handoff below remains active for its implementation.
+
+Next local engineering slice, when requested: reviewed isolated provider schema/account uniqueness plus durable app session-security wrapper and deterministic user-lock revocation races; keep runtime unavailable until approved dedicated Next/provider configuration and full smoke evidence exist. This update authorizes no external connection.
+
+## BL-004 implementation snapshot
+
 Snapshot: 15 October 2026 (Asia/Makassar), BL-004 implementation session. Starting clean local master / HEAD `d1686b9` (BL-003). User subsequently authorized a local BL-004 commit; this snapshot accompanies it (resolve SHA with git log). No push, publish, deployment, real-provider connection or paid provisioning. Verify actual Git/files each chat; local workspace is authoritative.
 
 | Area | Current state | Evidence / limitation |

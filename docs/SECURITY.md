@@ -8,6 +8,8 @@ Runtime DB access is trusted service access with repository tenant predicates, n
 
 ## Trust boundaries
 
+[DEC-001 follow-up](decisions/ADR-006-auth-session-postgres-validation.md), 18 October: native library PG sessions/reset/logout have bounded local evidence, with synthetic OAuth/mail. Raw logout reports success on failed deletion, and generated account schema lacks provider/subject pair uniqueness; app durable revocation, production auth constraints and independent persistent operator assurance are not implemented. Current public capability/pricing research is a conditional recommendation, not production approval. Keep raw account deletion inaccessible pending authenticated request/revocation/studio retention orchestration under DEC-006.
+
 Browsers and provider responses are untrusted. The server owns authorization, quota, time and confirmation state. Studio membership does not grant platform permission, and a gallery grant does not grant owner permission. Background jobs execute with a recorded studio/project scope. Private storage never grants access simply because an object key is known.
 
 The Drive link supplied by a studio must be validated through the provider adapter; it must not become a generic server-side URL fetch. Original Drive permissions are independent from Snappik. A public source link remains public outside the app.

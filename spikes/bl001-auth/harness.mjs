@@ -3,7 +3,7 @@ import { betterAuth } from 'better-auth';
 import { memoryAdapter } from 'better-auth/adapters/memory';
 import { genericOAuth, twoFactor } from 'better-auth/plugins';
 
-// SYNTHETIC HARNESS ONLY. Not application routes, durable storage, or a production adapter.
+// INVESTIGATION HARNESS ONLY. Fixtures, not application routes or a production adapter.
 export const ORIGIN = 'https://snappik.example.test';
 export const PASSWORD = 'Synthetic-only!Password-4826';
 const ownerPaths = /^\/app(?:\/[A-Za-z0-9_-]+)*\/?$/;
@@ -23,7 +23,8 @@ export function operatorPolicy({ permissions, evidence, sessionId, permission, n
       evidence.verifiedAt > now || now - evidence.verifiedAt >= 15 * 60_000) return 'MFA_REQUIRED';
   return null;
 }
-export function createSpike() {
+/** @param {{ database?: import('better-auth').BetterAuthOptions['database'], secret?: string }} [options] */
+export function createSpike({ database, secret = randomBytes(48).toString('base64url') } = {}) {
   const db = { user: [], session: [], account: [], verification: [], twoFactor: [] };
   const mail = [];
   const mappings = new Map();
@@ -37,8 +38,8 @@ export function createSpike() {
   const auth = betterAuth({
     appName: 'Snappik BL-001 synthetic spike',
     baseURL: ORIGIN,
-    secret: randomBytes(48).toString('base64url'),
-    database: memoryAdapter(db),
+    secret,
+    database: database ?? memoryAdapter(db),
     logger: { disabled: true },
     trustedOrigins: [ORIGIN],
     advanced: { useSecureCookies: true, database: { generateId: 'uuid' } },
@@ -80,6 +81,10 @@ export function createSpike() {
     }
     return [...jar].map(([key, value]) => `${key}=${value}`).join('; ');
   };
+  /**
+   * @param {string} path
+   * @param {{ body?: Record<string, unknown>, cookie?: string, origin?: string | null, method?: string }} [options]
+   */
   async function request(path, { body, cookie = '', origin = ORIGIN, method = body ? 'POST' : 'GET' } = {}) {
     const headers = new Headers({ cookie });
     if (origin !== null) headers.set('origin', origin);

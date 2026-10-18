@@ -107,7 +107,9 @@ Migrations are reviewed, forward-numbered and tested on production-like syntheti
 
 ## BL-001 candidate auth persistence boundary
 
-Logical requirements only, not migrations or PostgreSQL evidence. DEC-001 remains open; see [ADR-004](decisions/ADR-004-auth-session-feasibility.md) and [session contract](auth/SESSION_CONTRACT.md).
+Application auth-security requirements below remain logical only, not implemented migrations or their PostgreSQL evidence. DEC-001 remains open; see historical [ADR-004](decisions/ADR-004-auth-session-feasibility.md), current follow-up below and [session contract](auth/SESSION_CONTRACT.md).
+
+18 October follow-up: [ADR-006](decisions/ADR-006-auth-session-postgres-validation.md) and [evidence](auth/DEC-001-EVIDENCE-2026-10-18.md) now exercise native library tables in a fresh isolated PG cluster; app security metadata below remains logical/unimplemented. Generated Better Auth 1.7.9 schema accepted duplicate `(providerId,accountId)`; reviewed auth migrations must enforce this pair, binding each providerId to one fixed issuer and handling conflicts without repointing accounts. A spike-only unique index rejected duplicates; production namespace/grants/callback-link races remain unverified. Session tokens were unique. No app migration changed.
 
 For Better Auth candidate, auth_provider is `better-auth:<AUTH_INSTANCE_ID>` and auth_subject is the immutable library user UUID, not email or upstream OAuth account ID. Library account records connect several credentials to that user. Upstream linking must preserve that library user; it never merges app studios. Namespace changes require reviewed migration.
 

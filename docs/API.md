@@ -128,6 +128,8 @@ Future payments, integration keys, staff invitations, print/extra and ZIP endpoi
 
 Candidate Better Auth mount `/api/auth/*` is separate from `/api/v1`. Endpoint names/shapes below were exercised through the isolated library handler, not deployed or integrated with Next.js. Production must wrap sensitive handlers with the [session contract](auth/SESSION_CONTRACT.md), durable revocation, CSRF and response redaction. Do not expose raw library tokens/account records through business DTOs.
 
+[18 October PG follow-up](auth/DEC-001-EVIDENCE-2026-10-18.md) confirms persistence for native callback/logout/reset but reproduces raw sign-out 200 with a still-valid copied cookie after delete failure. The required wrapper's 503/revocation semantics below remain unimplemented; passing finding tests do not authorize exposing these routes. Business wire shapes are unchanged.
+
 | Method / absolute path | Candidate behavior |
 |---|---|
 | POST `/api/auth/sign-up/email` | Library credential signup; verified email required before owner business access; no auto-login/provisioning claim |

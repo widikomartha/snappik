@@ -8,7 +8,7 @@ Status: target design with a verified provider-independent BL-003 foundation and
 |---|---|---|
 | Web and API | TypeScript, Next.js; same-origin browser/API deployment | Local Next 16.4.1 / React 19.3.1 / TS 5.9.3; Node 24.18.0 / npm 11.16.0 pinned; BL-004 me/onboarding routes built, other business endpoints pending |
 | Persistence | PostgreSQL with explicit migrations and transactions | Initial app schema/transactions verified on isolated PostgreSQL 18.4; managed host and provider-owned auth schema undecided |
-| Authentication | Conditional Better Auth/PostgreSQL server-session candidate | DEC-001 open; [ADR-004](decisions/ADR-004-auth-session-feasibility.md) and [candidate contract](auth/SESSION_CONTRACT.md); synthetic evidence only |
+| Authentication | Conditional Better Auth/PostgreSQL server-session candidate; Auth0 managed fallback | DEC-001 OPEN/PARTIALLY VALIDATED; [ADR-006](decisions/ADR-006-auth-session-postgres-validation.md) supplements ADR-004; 18 memory + 5 real local PG checks with synthetic identities/mail, no Next auth integration/live provider; durable app guard and schema gaps remain |
 | Source inventory | Google Drive adapter using supported APIs | DEC-002 open: [bounded candidate contract](drive/ADAPTER_CONTRACT.md), 29 synthetic checks; authorized folder/API evidence pending |
 | Async work | PostgreSQL-backed jobs, worker from the same repository | Local claim/lease/fencing/retry infrastructure verified; all real handlers explicitly unconfigured; no Redis |
 | Derived assets | Private object storage plus controlled media endpoint | DEC-003 open: [conditional hosting proposal](decisions/ADR-005-drive-hosting-feasibility.md); no provider infrastructure verified |
