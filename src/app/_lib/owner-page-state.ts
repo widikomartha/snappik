@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { auth } from '../../adapters/providers.js';
+import { runtimeAuth as auth } from '../../modules/auth/runtime.js';
 import { getPool } from '../../db/pool.js';
 import { getMe } from '../../modules/onboarding/service.js';
 import { SetupError, safeOwnerReturn } from '../../modules/onboarding/policy.js';

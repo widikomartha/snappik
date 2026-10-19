@@ -9,6 +9,16 @@ test('configuration rejects missing, insecure, unsupported-provider and unbounde
   assert.equal(readConfig(env).concurrency,2);
   for (const change of [{DATABASE_URL:''},{APP_ORIGIN:'http://example.com'},{APP_ORIGIN:'https://example.com/path'},{WORKER_CONCURRENCY:'200'},{JOB_LEASE_SECONDS:'NaN'},{DB_POOL_MAX:'0'},{AUTH_MODE:'fake'},{DRIVE_MODE:'live'}]) assert.throws(() => readConfig({...env,...change}),/^Error: CONFIG_/);
 });
+test('local auth requires explicit namespace/secret and loopback app/database; canonical origin cannot drift',()=>{
+  const local={...env,AUTH_MODE:'better-auth-local',AUTH_INSTANCE_ID:'synthetic',BETTER_AUTH_SECRET:'synthetic-test-only-'.repeat(3)};
+  assert.equal(readConfig(local).authMode,'better-auth-local');
+  assert.equal(readConfig({...local,AUTH_RECOVERY_KEY:Buffer.alloc(32,1).toString('base64url')}).recoveryKey?.length,43);
+  for(const change of [{APP_ORIGIN:'https://example.test'},{DATABASE_URL:'postgresql://synthetic@remote.example.test/db'},
+    {AUTH_INSTANCE_ID:''},{AUTH_INSTANCE_ID:'unsafe:issuer'},{BETTER_AUTH_SECRET:'short'},{BETTER_AUTH_URL:'https://wrong.example.test'},
+    {AUTH_RECOVERY_KEY:'not-a-key'},{AUTH_RECOVERY_KEY:'_'.repeat(43)},{DB_POOL_MAX:'1'}]) {
+    assert.throws(()=>readConfig({...local,...change}),/^Error: CONFIG_/);
+  }
+});
 test('canonical hash is ordered, bounded and distinguishes changes',() => {
   assert.equal(canonicalHash({a:1,b:[2,3]}),canonicalHash({b:[2,3],a:1}));
   assert.notEqual(canonicalHash({a:1}),canonicalHash({a:2}));

@@ -1,5 +1,7 @@
 # Requirements traceability
 
+DEC-001 [recovery increment](auth/DEC-001-RECOVERY-EVIDENCE-2026-10-19.md): REQ-AUTH-001 / REQ-REL-001 / BR-REL-001/002 → T-001 local durable request/reset/outbox/retry/race subset; REQ-TEN-001 / REQ-ONB-001 / BR-TEN-001 / BR-ONB-001 / BR-ENT-001 → T-002/003 preserved identity/studio/trial/audit and additive upgrade; REQ-OPS-001 / BR-OPS-001 → T-015 pending TOTP proof invalidated after reset with enrollment retained. Fourteen PG checks plus actual Next HTTP are synthetic delivery evidence, not full acceptance or production approval. BL-001/003/004 remain In progress; DEC-001 open.
+
 Status: full application acceptance remains **incomplete**. BL-001 has a verified synthetic auth subset documented in [evidence](auth/BL-001-EVIDENCE.md); this does not pass full T-001 or T-015. BL-002's [evidence](drive/BL-002-EVIDENCE.md) maps a 29-check offline feasibility subset to T-005/T-013/T-017/T-022 implications; none is full acceptance. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.
 
 BL-005 is Done for the design/prototype deliverable: [UX specification](design/BL-005-UX.md) and [evidence](design/BL-005-EVIDENCE.md) map REQ-GAL-001/REQ-UX-001 to design-relevant T-006/T-016 checks. Synthetic in-memory journeys, viewport measurements and wireframes do not change the full application acceptance status of those rows.
@@ -9,6 +11,8 @@ BL-003 [foundation evidence](foundation/BL-003-EVIDENCE.md) verifies REQ-TEN-001
 DEC-001 [18 October follow-up](auth/DEC-001-EVIDENCE-2026-10-18.md) adds 5 real local PG checks to the 18 memory checks. Native logout failure and account-pair uniqueness gaps are reproduced; OAuth/mail and business scope stay synthetic. This expands REQ-AUTH-001 investigation evidence only; production T-001 and associated T-002/T-003/T-015 remain incomplete. [ADR-006](decisions/ADR-006-auth-session-postgres-validation.md) records the conditional recommendation and open closure gates.
 
 DEC-003 [current evidence](hosting/DEC-003-EVIDENCE-2026-10-18.md) / [ADR-008](decisions/ADR-008-hosting-postgres-private-storage.md): REQ-DL-001 / BR-DL-001 and BR-DRIVE-001 gain five local HTTP transport/cancel/cleanup checks; REQ-GAL-001 has two native decoder experiment cases only. REQ-REL-001 / BR-REL-002 retains historical local PG lease evidence, with no new hosted proof. REQ-OBS-001 and REQ-RET-001 / BR-RET-002 remain gated by provider logs, private-object and 30-day restore/revocation tests. T-013/T-017/T-020/T-022 incomplete; BL-002/003 In progress, BL-013/017 Todo. No provider closure or new product pixel limit.
+
+DEC-001 [19 October evidence](auth/DEC-001-EVIDENCE-2026-10-19.md) extends REQ-AUTH-001 / BR-TEN-001 / BR-ONB-001 with durable local cookie/revocation and Next/browser setup/logout; REQ-TEN-001 gets a same-transaction stale-session denial; REQ-OPS-001 / BR-OPS-001 gets persisted permission/TOTP guard checks. Ten new real-PG checks plus HTTP/browser observations do not pass full T-001/T-002/T-003/T-015 or close DEC-001. Existing Drive/hosting evidence unchanged.
 
 | Requirement | Business rule(s) | Backlog | Acceptance tests |
 |---|---|---|---|

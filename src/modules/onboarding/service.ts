@@ -5,6 +5,7 @@ import { parseSetup, projectDefaults, SetupError } from './policy.js';
 
 // Every public entry receives a freshly resolved server-side session, never caller IDs.
 async function checkSession(tx: pg.PoolClient, session: ProviderSession) {
+  if (session.assertActive) await session.assertActive(tx);
   if (!session.provider || session.provider.length > 200 || !session.subject || session.subject.length > 200 || !session.sessionId || !Number.isFinite(session.expiresAt?.getTime())) throw new SetupError('AUTH_REQUIRED');
   if (session.emailVerified !== true) throw new SetupError('EMAIL_VERIFICATION_REQUIRED');
   const valid = await tx.query('SELECT clock_timestamp() < $1::timestamptz AS valid',[session.expiresAt]);

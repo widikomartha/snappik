@@ -16,6 +16,8 @@ BL-004 [executed evidence](auth/BL-004-EVIDENCE.md): `npm run test:db` now runs 
 
 ## Acceptance matrix
 
+19 October [recovery evidence](auth/DEC-001-RECOVERY-EVIDENCE-2026-10-19.md): `npm run test:recovery`14/14 actual-PG checks plus built Next HTTP recovery/reset/restart. T-001 subset: generic known/unknown/failed enqueue, token expiry/reuse/concurrent consumption, all-session invalidation, reset/login/session-read/TOTP proof ordering, durable outbox bounded retry/deadline/lost ack/worker+DB restart/redaction and reviewed role. T-002/003 subset retains studio/trial/settings/membership/audit unchanged across reset and populated003 upgrade. T-015 subset rejects correct copied pending challenge after reset, keeps enrollment/new-login MFA. Full scenarios remain incomplete: real delivery/callback/HTTPS/abuse/rotation/operator recovery/browser recovery and future API matrix. Same-transaction synthetic failure and discarded response do not prove real COMMIT network-ack loss.
+
 | Test | Scenario and required assertion | Requirements |
 |---|---|---|
 | T-001 | Login, protected bookmark, logout, expired session and recovery; safe return URL; no protected response after logout | AUTH |
@@ -46,6 +48,8 @@ BL-004 [executed evidence](auth/BL-004-EVIDENCE.md): `npm run test:db` now runs 
 [Foundation evidence](foundation/BL-003-EVIDENCE.md) records executed `npm run check`: 4 unit + 17 PostgreSQL 18.4 integration tests Passed, strict TypeScript and both builds Passed; `npm run test:smoke` verifies actual production process/CLI readiness. The harness creates a fresh isolated cluster, never resets a runtime URL. It tests scoped repository/FK denial (T-002 foundation), synthetic effect/job/audit/idempotency transaction/replay (T-004 foundation), real killed-process expiry/renewal/fencing/backoff/exhaustion (T-017 foundation), restricted role and migration compatibility. Complete HTTP/auth, quota and actual inventory/provider scenarios remain untested. This does not pass those full tests or implement adjacent backlog IDs.
 
 ## Critical race tests
+
+DEC-001 [19 October hardening evidence](auth/DEC-001-EVIDENCE-2026-10-19.md) / [ADR-009](decisions/ADR-009-auth-local-hardening.md): `npm run test:auth` has 10 real PG checks for safe duplicate migration, concurrent account keys, durable logout/cleanup error/retry/outage/restart/process denial, deterministic stale-session mutation ordering, version/expiry/metadata guards, synthetic library callback/link, grants and persisted operator TOTP. `npm run test:auth:smoke` runs actual Next processes with credential cookies, setup/page, origin/storage-failure denials and copied-cookie rejection after restart. Browser UI journey also observed with synthetic owner/mail. Full T-001/T-002/T-003/T-015 remain incomplete: real provider/HTTPS, recovery/reset, operator bootstrap/lost-factor, future API matrix and device/accessibility paths are unverified. Original isolated spike tests retain historical scope; no new native library correctness claim.
 
 Use separate database connections and barriers to run competing operations; do not rely on timing-only sleeps. Test confirm vs save, confirm vs source removal publication, config quota reduction vs save, archive vs download authorization, restore vs purge and concurrent trial quota consumption. Allowed outcomes must follow the lock order and revision contract. Assert records, not merely response status.
 

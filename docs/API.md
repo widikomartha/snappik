@@ -6,6 +6,8 @@ Implemented inventory: `GET /health/live` (200 `{status:"live"}`), `GET /health/
 
 ## Shared conventions
 
+19 October local auth slice: [ADR-009](decisions/ADR-009-auth-local-hardening.md), [hardening evidence](auth/DEC-001-EVIDENCE-2026-10-19.md), [ADR-010 recovery extension](decisions/ADR-010-password-recovery-outbox.md). Explicit better-auth-local mounts POST `/api/auth/sign-in/email`, `/api/auth/sign-out`, `/api/auth/two-factor/verify-totp`; optional recovery key adds both recovery POSTs specified below. Login body `{email,password,return_to?}` → `{success:true,return_to}` or `{success:true,two_factor_required:true}`. TOTP body `{code,return_to?}` excludes trustDevice. Logout body is exactly `{}` → `{success:true}` only after durable app revocation; storage uncertainty 503 preserves cookie for retry. Native deletion failure after successful revocation does not restore app access. Auth responses redact native token/user/account fields and use no-store/no-referrer/request IDs for errors. Exact Origin/JSON/8192-byte/unknown-field checks apply. GET on enabled mutation routes is405; other account/social/callback/link/factor-management paths are404. Recovery without key:503 RECOVERY_NOT_CONFIGURED; default unconfigured auth:503. Business DTOs remain unchanged, with same-transaction session revalidation. No public registration/verification or real email/provider flow is enabled.
+
 - Owner/ops requests use server-validated secure session cookies. State changes require same-origin/CSRF protection.
 - Studio scope comes from membership; do not accept `studio_id` as a client ownership override.
 - Client requests use the gallery grant cookie minted for one project/workflow. This cookie cannot access owner routes.
@@ -41,7 +43,7 @@ Implemented inventory: `GET /health/live` (200 `{status:"live"}`), `GET /health/
 | GET `/dashboard` | Totals, deadline summaries, pending/confirmed counts, generated_at | TRACK |
 | GET `/jobs/:id` | Tenant-owned sanitized state, progress and safe error code | OBS |
 
-Auth login/logout/recovery/callback endpoints remain library-delegated, outside the business prefix. DEC-001 is open; the Better Auth candidate is specified below and in the [session contract](auth/SESSION_CONTRACT.md). Do not add custom password endpoints. Operator bootstrap and user invitation APIs are not public MVP endpoints.
+Auth login/logout/recovery/callback endpoints remain outside the business prefix. DEC-001 is open; library credential proof/hashing plus the reviewed transactional recovery wrapper are specified below and in the [session contract](auth/SESSION_CONTRACT.md). Do not add a second password algorithm or expose native helper endpoints. Operator bootstrap and user invitation APIs are not public MVP endpoints.
 
 ### BL-004 implemented setup semantics
 
@@ -132,11 +134,11 @@ Do not map unknown backend errors to success or leak SQL/provider responses. Eve
 
 Future payments, integration keys, staff invitations, print/extra and ZIP endpoints are intentionally absent; add them with their own contracts and threat review.
 
-## BL-001 candidate auth boundary (not implemented routes)
+## BL-001 auth boundary (local subset; production candidate)
 
-Candidate Better Auth mount `/api/auth/*` is separate from `/api/v1`. Endpoint names/shapes below were exercised through the isolated library handler, not deployed or integrated with Next.js. Production must wrap sensitive handlers with the [session contract](auth/SESSION_CONTRACT.md), durable revocation, CSRF and response redaction. Do not expose raw library tokens/account records through business DTOs.
+Candidate Better Auth mount `/api/auth/*` is separate from `/api/v1`. The explicit local allowlist above is mounted in Next.js; remaining candidate endpoints below retain their provider/recovery gates. Historical isolated library handlers exercised additional routes without authorizing public access. Production must wrap sensitive handlers with the [session contract](auth/SESSION_CONTRACT.md), durable revocation, CSRF and response redaction. Do not expose raw library tokens/account records through business DTOs.
 
-[18 October PG follow-up](auth/DEC-001-EVIDENCE-2026-10-18.md) confirms persistence for native callback/logout/reset but reproduces raw sign-out 200 with a still-valid copied cookie after delete failure. The required wrapper's 503/revocation semantics below remain unimplemented; passing finding tests do not authorize exposing these routes. Business wire shapes are unchanged.
+[18 October PG follow-up](auth/DEC-001-EVIDENCE-2026-10-18.md) confirms persistence for native callback/logout/reset but reproduces raw sign-out200 with a still-valid copied cookie after delete failure. ADR-009/010 now implement the guarded local wrapper above; production/provider gates remain. Passing native finding tests never authorize raw endpoint exposure. Business wire shapes are unchanged.
 
 | Method / absolute path | Candidate behavior |
 |---|---|
@@ -145,10 +147,20 @@ Candidate Better Auth mount `/api/auth/*` is separate from `/api/v1`. Endpoint n
 | POST `/api/auth/sign-in/social` | Server-approved provider; sanitized callbackURL from protected state, fixed error/new-user destinations; no arbitrary origin |
 | GET `/api/auth/callback/:providerId` | Exact registered callback; library validates browser-bound state/PKCE and approved provider proof; safe owner return path; failures return safe login state |
 | POST `/api/auth/sign-out` | Wrapper commits durable revocation, clears MFA, performs library cleanup; success requires certain revocation; storage failure 503 even if raw library says success |
-| POST `/api/auth/request-password-reset` | Library reset delivery request; fixed recovery destination; generic known/unknown result; throttled |
-| POST `/api/auth/reset-password` | Single-use expiring library token; revoke all sessions, no automatic login/MFA reset |
+| POST `/api/auth/request-password-reset` | Local reviewed wrapper below; generic durable acknowledgement, not native library DTO/delivery |
+| POST `/api/auth/reset-password` | Local reviewed wrapper below; single-use token plus atomic library hash/version/revocation, not native library DTO |
 | POST `/api/auth/two-factor/verify-totp` | Current challenge/session; server binds successful TOTP to resulting session; operator trusted-device bypass denied |
 
-Library helper/account-management endpoints are not automatically authorized product APIs. Keep linking, factor disable/replacement and other unused sensitive handlers inaccessible until explicit policy wrappers are verified. Provider recovery/verification handlers retain their native wire contract.
+Library helper/account-management endpoints are not automatically authorized product APIs. Keep linking, factor disable/replacement and other unused sensitive handlers inaccessible until explicit policy wrappers are verified. Recovery uses the reviewed wrapper wire contract below; native reset/verification helpers remain inaccessible.
+
+### Local password recovery/reset contract
+
+[ADR-010](decisions/ADR-010-password-recovery-outbox.md) and [executed evidence](auth/DEC-001-RECOVERY-EVIDENCE-2026-10-19.md) supersede only the recovery-unavailable statement above: explicit better-auth-local plus AUTH_RECOVERY_KEY mounts both POSTs. Without the key:503 RECOVERY_NOT_CONFIGURED; default unconfigured mode:503. Existing Origin/JSON/body/unknown-field/no-store/no-referrer rules apply; GET:405. No external email or production mode.
+
+Request body `{email,request_id}`: bounded email254, UUIDv4 request_id. Same normalized address+ID dedupes for1day; duplicate/throttled/unknown/unverified/OAuth-only/eligible requests all return202 `{accepted:true}`. Budget3 unique requests/hour/address; it is not an IP/global abuse defense. Generic503 TEMPORARILY_UNAVAILABLE with Retry-After5 for storage/commit/busy uncertainty, without revealing account existence. Both eligible/ineligible accounts get the same durable write path. Acknowledgement means enqueue, never delivery. New manual request may use a fresh UUID; retry a lost response with the original UUID.
+
+Reset body `{token,new_password}`: token43 base64url characters, password12–128 characters. Token is generated/validated server-side,15-minute DB-clock expiry, single-use. HTTP200 `{success:true}` only after credential/token/security-version/all-session transaction commits. Invalid/expired/reused token:400 INVALID_OR_EXPIRED_RESET; malformed fields:400 INVALID_INPUT; uncertainty:503. No token, password, library user/session or hash echoed. Never auto-login, reset factor enrollment or grant ops. All user reset links and pending primary/TOTP/trusted-device proofs are invalidated. Old native cookies can remain stored but every app guard denies them. No business/studio/trial reset.
+
+Recovery link is canonical `${APP_ORIGIN}/recover#token=<opaque>`; no caller redirect accepted. Client removes fragment, keeps token only in component memory, sends it in POST body. Request-body/URL/cookie capture at future hosting/sender remains a release gate. Lost reset response: retry may find token already consumed; try the new password or request a fresh link. Enqueue failure cannot claim accepted; delivery failure is observable only through sanitized internal aggregates, never account-specific public status. Outbox policy/synthetic CLI lives in Database/session contract. This local slice does not prove production delivery, browser interaction, timing resistance or throughput.
 
 Owner API session errors: 401 AUTH_REQUIRED for invalid/expired/unverified sessions; 503 TEMPORARILY_UNAVAILABLE for unverifiable storage; 403 SETUP_REQUIRED for a business route without complete membership/setup. GET /me may instead report setup_required. Operator guards add 403 PERMISSION_DENIED or MFA_REQUIRED without exposing gallery contents. Protected responses are no-store. Reauthentication never silently replays a business mutation with a substituted revision; retrieve canonical state and preserve pending intent.

@@ -1,4 +1,5 @@
-// No verified identity is manufactured here. DEC-001 is still open.
+import type pg from 'pg';
+// No caller-supplied identity is manufactured here. DEC-001 is still open.
 declare const verifiedOwner: unique symbol;
 export type VerifiedOwner = Readonly<{ userId: string; sessionId: string; [verifiedOwner]: true }>;
 // Only an authoritative server-side provider lookup may produce this value.
@@ -7,6 +8,8 @@ export type VerifiedOwner = Readonly<{ userId: string; sessionId: string; [verif
 export type ProviderSession = Readonly<{
   provider: string; subject: string; sessionId: string; expiresAt: Date;
   emailVerified: boolean; email: string; displayName: string;
+  // Server-only closure: revalidates under the SAME transaction/user lock as business work.
+  assertActive?:(tx:pg.PoolClient)=>Promise<void>;
 }>;
 export interface AuthAdapter { resolveSession(request: Request): Promise<ProviderSession | null> }
 export interface DriveAdapter { scan(project: { studioId: string; projectId: string }, signal: AbortSignal): Promise<void> }
