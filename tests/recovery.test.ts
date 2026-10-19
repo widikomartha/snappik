@@ -26,9 +26,24 @@ const reset=(token:string,password=newPassword)=>context.auth.handle(context.req
 const login=(email:string,password:string,auth=context)=>auth.auth.handle(auth.request('/sign-in/email',{email,password}));
 const cookie=(response:Response)=>response.headers.getSetCookie().map(c=>c.split(';')[0]).join('; ');
 const session=(value:string,auth=context)=>auth.auth.resolveSession(new Request(context.origin,{headers:{cookie:value}}));
-const captured:{id:string;email:string;url:string}[]=[];
+const captured:{id:string;email:string;url:string;code:string}[]=[];
 async function drain(){for(let i=0;i<30;i++){if(await deliverRecovery(context.app,key,context.origin,async message=>{captured.push(message);})==='idle')return;}throw new Error('TEST_BATCH_BOUND');}
-async function token(email:string){await context.register(email);assert.equal((await request(email)).status,202);await drain();const message=captured.findLast(m=>m.email===email);assert.ok(message);return new URLSearchParams(new URL(message.url).hash.slice(1)).get('token')!;}
+async function token(email:string){await context.register(email);assert.equal((await request(email)).status,202);await drain();const message=captured.findLast(m=>m.email===email);assert.ok(message);return message.code;}
+test('reconstructed delivery emits a clean fixed URL and a separate high-entropy code without changing queued payload format',async()=>{
+  const email=address();await context.register(email);await request(email);
+  const replica=testAuthentication(instance.connectionString,context.origin,context.secret,[],key);
+  try {
+    let message:typeof captured[number]|undefined;
+    assert.equal(await deliverRecovery(replica.app,key,context.origin,async value=>{message=value;}),'completed_synthetic');
+    assert.ok(message);assert.equal(message.url,`${context.origin}/recover?step=reset`);
+    assert.ok(/^[A-Za-z0-9_-]{43}$/.test(message.code));assert.ok(!message.url.includes(message.code));
+    const record=(await replica.app.query('SELECT token_hash,payload FROM snappik_auth.recovery_outbox WHERE id=$1',[message.id])).rows[0];
+    assert.ok(record.token_hash===recoveryHash(message.code));assert.equal(record.payload,null);
+    // No cookie or initiating browser/session required; same guarded transaction.
+    assert.equal((await replica.auth.handle(replica.request('/reset-password',{token:message.code,new_password:newPassword}))).status,200);
+    assert.equal((await reset(message.code)).status,400);
+  }finally{await replica.close();}
+});
 async function waiting() {
   for(let i=0;i<100;i++){
     if((await context.app.query("SELECT 1 FROM pg_stat_activity WHERE wait_event='advisory' AND query='SELECT pg_advisory_xact_lock(734004)'")).rowCount)return;
@@ -103,8 +118,8 @@ test('expired, malformed, reused and competing valid tokens cannot mutate creden
   const email=address(),raw=await token(email);
   await context.app.query("UPDATE snappik_auth.password_recovery SET expires_at=clock_timestamp()-interval '1 second' WHERE token_hash=$1",[recoveryHash(raw)]);
   assert.equal((await reset(raw)).status,400);assert.equal((await reset('invalid')).status,400);assert.equal((await login(email,testPassword)).status,200);
-  assert.equal((await request(email)).status,202);await drain();const one=new URLSearchParams(new URL(captured.findLast(m=>m.email===email)!.url).hash.slice(1)).get('token')!;
-  assert.equal((await request(email)).status,202);await drain();const two=new URLSearchParams(new URL(captured.findLast(m=>m.email===email)!.url).hash.slice(1)).get('token')!;
+  assert.equal((await request(email)).status,202);await drain();const one=captured.findLast(m=>m.email===email)!.code;
+  assert.equal((await request(email)).status,202);await drain();const two=captured.findLast(m=>m.email===email)!.code;
   const replica=testAuthentication(instance.connectionString,context.origin,context.secret,[],key);
   try {
     const responses=await Promise.all([reset(one),replica.auth.handle(replica.request('/reset-password',{token:two,new_password:newPassword}))]);
@@ -152,12 +167,15 @@ test('abandoned leases survive a separate worker process exit and database resta
 
 test('delivery response loss repeats the same message safely; timeouts are bounded and do not persist raw failures',async()=>{
   const email=address();await context.register(email);await request(email);
-  let delivered:{id:string;email:string;url:string}|undefined;
+  let delivered:{id:string;email:string;url:string;code:string}|undefined;
   assert.equal(await deliverRecovery(context.app,key,context.origin,async message=>{delivered=message;throw new Error('ACK_LOST_AFTER_DELIVERY');}),'retry_or_failed');
   assert.ok(delivered);
+  const first=delivered;
   await context.app.query("UPDATE snappik_auth.recovery_outbox SET available_at=clock_timestamp()-interval '1 second' WHERE id=$1",[delivered.id]);
-  assert.equal(await deliverRecovery(context.app,key,context.origin,async message=>assert.deepEqual(message,delivered)),'completed_synthetic');
-  const raw=new URLSearchParams(new URL(delivered.url).hash.slice(1)).get('token')!;
+  assert.equal(await deliverRecovery(context.app,key,context.origin,async message=>{
+    assert.ok(message.id===first.id&&message.email===first.email&&message.url===first.url&&message.code===first.code,'DELIVERY_RETRY_IDENTITY_MISMATCH');
+  }),'completed_synthetic');
+  const raw=delivered.code;
   assert.equal((await reset(raw)).status,200);assert.equal((await reset(raw)).status,400);
   await request(email);let aborted=false;
   const started=Date.now();
@@ -176,7 +194,7 @@ test('enqueue and reset database failures roll back durable receipts, token cons
     for(const value of [email,unknown]){const response=await request(value,id);assert.equal(response.status,503);assert.ok(!(await response.text()).includes('SECRET_ENQUEUE_DETAIL'));}
     assert.equal((await context.app.query('SELECT count(*)::int n FROM snappik_auth.recovery_requests')).rows[0].n,count);
   }finally{await context.app.query('DROP TRIGGER recovery_enqueue_failure ON snappik_auth.recovery_outbox; DROP FUNCTION public.recovery_enqueue_failure()');}
-  assert.equal((await request(email,id)).status,202);await drain();const raw=new URLSearchParams(new URL(captured.findLast(m=>m.email===email)!.url).hash.slice(1)).get('token')!;
+  assert.equal((await request(email,id)).status,202);await drain();const raw=captured.findLast(m=>m.email===email)!.code;
   const active=await context.login(email);
   await context.app.query(`CREATE FUNCTION public.recovery_reset_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'SECRET_RESET_DETAIL'; END $$;
     CREATE TRIGGER recovery_reset_failure BEFORE UPDATE ON public.owner_session_security FOR EACH ROW EXECUTE FUNCTION public.recovery_reset_failure()`);
@@ -218,7 +236,7 @@ test('reviewed non-owner grants execute recovery enqueue, outbox and reset while
   const restricted=new pg.Pool({connectionString:instance.connectionString,max:2,options:'-c role=synthetic_recovery_runtime'});
   try {
     await requestRecovery(restricted,key,email,randomUUID());
-    let raw='';assert.equal(await deliverRecovery(restricted,key,context.origin,async message=>{raw=new URLSearchParams(new URL(message.url).hash.slice(1)).get('token')!;}),'completed_synthetic');
+    let raw='';assert.equal(await deliverRecovery(restricted,key,context.origin,async message=>{raw=message.code;}),'completed_synthetic');
     await credentialGate(restricted)(tx=>resetRecovery(tx,'better-auth:synthetic-local',raw,async()=>(await context.library.$context).password.hash(newPassword)));
     assert.equal(await session(old.cookie),null);assert.equal((await login(email,newPassword)).status,200);
     await assert.rejects(restricted.query('UPDATE public.users SET auth_subject=auth_subject WHERE false'),{code:'42501'});

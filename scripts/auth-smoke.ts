@@ -58,9 +58,9 @@ try {
     try{assert.equal((await post('/api/auth/sign-out',{},cookie)).status,503);assert.equal((await fetch(`${origin}/api/v1/me`,{headers:{cookie}})).status,200);}
     finally{await db.query('DROP TRIGGER smoke_revoke_failure ON owner_session_security; DROP FUNCTION public.smoke_revoke_failure()');}
     assert.equal((await post('/api/auth/request-password-reset',{email:'browser-owner@example.test',request_id:randomUUID()})).status,202);
-    const messages:{url:string}[]=[];
+    const messages:{url:string;code:string}[]=[];
     assert.equal(await deliverRecovery(db,recoveryKey,origin,async message=>{messages.push(message);}),'completed_synthetic');
-    const resetToken=new URLSearchParams(new URL(messages[0].url).hash.slice(1)).get('token');assert.ok(resetToken);
+    const resetToken=messages[0].code;assert.ok(resetToken);
     assert.equal((await fetch(`${origin}/recover`)).status,200);
     assert.equal((await post('/api/auth/reset-password',{token:resetToken,new_password:'Synthetic-reset-smoke!4826'})).status,200);
     assert.equal((await fetch(`${origin}/api/v1/me`,{headers:{cookie}})).status,401);

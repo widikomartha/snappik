@@ -1,5 +1,7 @@
 # Database design
 
+Recovery handoff: [ADR-012](decisions/ADR-012-recovery-code-handoff.md) changes delivery interpretation only: encrypted v1 payload token becomes a separate code; the clean link contains no proof. SHA256 lookup,15-minute expiry, auth SQL/grants, proof fence and atomic version/revocation remain unchanged. No migration/user-data reset or queued-job deletion; pending ciphertext stays readable. [handoff evidence](auth/DEC-001-HANDOFF-EVIDENCE-2026-10-19.md) includes reconstructed delivery and cookie-less reset verification.
+
 Status: logical MVP contract with initial provider-independent [app migrations](../src/db/migrations/001_foundation.sql) and [lease expansion](../src/db/migrations/002_lease_fencing.sql), verified on isolated PostgreSQL 18.4 in BL-003. Reviewed auth tables exist for the opt-in local slice; production auth and unresolved Drive credential/resource-key extensions remain gated. Existing source fields do not prove source validation. Apply only reviewed migrations to a known isolated database; no provider/production readiness is implied. IDs below are UUIDs unless stated otherwise; timestamps are `timestamptz` stored as UTC; JSON is `jsonb` with application schema validation. Use `NOT NULL` unless a field is explicitly optional. Audit timestamps are server-generated.
 
 ## Relationships

@@ -18,12 +18,12 @@ const controlPath=`/${randomUUID()}`;
 const resetPassword='Synthetic-browser-reset!Password-9284';
 let web:ChildProcess|undefined,fixture:ReturnType<typeof testAuthentication>|undefined;
 let logText='',currentEmail='',counter=0,stopping=false;
-const messages:{id:string;email:string;url:string}[]=[],sessions=new Map<string,string[]>();
+const messages:{id:string;email:string;url:string;code:string}[]=[],sessions=new Map<string,string[]>();
 type Fault='drop-after'|'html'|'hold-before'|'hold-after';
 let fault:{path:string;mode:Fault}|undefined,release:(()=>void)|undefined;
 const observations:{path:string;method:string;status:number;body?:string;referrer:boolean}[]=[];
 let leaks=0;
-const tokens=()=>messages.map(m=>new URLSearchParams(new URL(m.url).hash.slice(1)).get('token')!).filter(Boolean);
+const tokens=()=>messages.map(m=>m.code);
 const sensitive=(value:string)=>tokens().some(token=>value.includes(token))||value.includes('#token=');
 const proxy=http.createServer(async(request,response)=>{
   const pathname=new URL(request.url??'/','http://localhost').pathname;
@@ -54,7 +54,7 @@ await new Promise<void>(resolve=>upstreamSocket.close(()=>resolve()));
 const publicPort=await listen(proxy),origin=`http://127.0.0.1:${publicPort}`;
 const post=(path:string,body:unknown,cookie='')=>fetch(`${origin}/api/auth${path}`,{method:'POST',headers:{origin,'content-type':'application/json',cookie},body:JSON.stringify(body)});
 async function stop(child:ChildProcess){if(child.exitCode===null&&child.signalCode===null){child.kill();await new Promise<void>(resolve=>child.once('exit',()=>resolve()));}}
-let lastResult:unknown={},deliveredUrl='';
+let lastResult:unknown={},deliveredUrl='',deliveredCode='';
 const escape=(value:string)=>value.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
 const controls=['seed','link','expire-token','expire-sessions','fail-reset','clear-failure','release','verify','audit','stop'];
 const control=http.createServer(async(request,response)=>{
@@ -68,8 +68,8 @@ const control=http.createServer(async(request,response)=>{
     const values=Object.fromEntries(new URLSearchParams(body));values.action=values.operation??values.action;
     try {
       const result=await command(values as {action:string});
-      if(values.action==='link'){deliveredUrl=String((result as {url?:string}).url??'');lastResult={link_available:Boolean(deliveredUrl)};}
-      else{lastResult=result;if(values.action==='seed')deliveredUrl='';}
+      if(values.action==='link'){deliveredUrl=String((result as {url?:string}).url??'');deliveredCode=String((result as {code?:string}).code??'');lastResult={link_available:Boolean(deliveredUrl)};}
+      else{lastResult=result;if(values.action==='seed'){deliveredUrl='';deliveredCode='';}}
     }catch{lastResult={error:'LAB_COMMAND_FAILED'};}
     response.writeHead(303,{Location:controlPath});response.end();return;
   }
@@ -82,7 +82,7 @@ const control=http.createServer(async(request,response)=>{
     ${controls.map(action=>form(action,{action})).join('')}
     ${(['drop-after','html','hold-before','hold-after'] as Fault[]).flatMap(mode=>['reset-password','request-password-reset'].map(path=>form(`${mode} ${path}`,{action:'fault',mode,path:`/api/auth/${path}`}))).join('')}
     <pre id="result">${escape(JSON.stringify(lastResult))}</pre>
-    ${deliveredUrl?`<a id="delivery" href="${escape(deliveredUrl)}">Open synthetic recovery link</a>`:''}
+    ${deliveredUrl?`<a id="delivery" href="${escape(deliveredUrl)}">Open synthetic recovery link</a><p>Synthetic recovery code: <code id="delivery-code">${escape(deliveredCode)}</code></p>`:''}
     <p><a href="${origin}/recover">Application recovery</a></p></main>
     <script nonce="${nonce}">const commands=${JSON.stringify(commands)};document.querySelectorAll('[data-lab]').forEach((button,i)=>button.addEventListener('click',async()=>{
       button.disabled=true;await fetch(location.pathname,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(commands[i])});location.reload();
@@ -102,11 +102,11 @@ async function command(input:{action:string;email?:string;mode?:Fault;path?:stri
   if(input.action==='link') {
     for(let i=0;i<10;i++)if(await deliverRecovery(pool,key,origin,async m=>{messages.push(m);})==='idle')break;
     const message=messages.findLast(m=>m.email===(input.email??currentEmail));
-    return {url:message?.url??null};
+    return {url:message?.url??null,code:message?.code??null};
   }
   if(input.action==='expire-token') {
     const message=messages.findLast(m=>m.email===currentEmail);if(!message)throw new Error('NO_LINK');
-    const token=new URLSearchParams(new URL(message.url).hash.slice(1)).get('token')!;
+    const token=message.code;
     await pool.query("UPDATE snappik_auth.password_recovery SET expires_at=clock_timestamp()-interval '1 second' WHERE token_hash=$1",[recoveryHash(token)]);
     return {ok:true};
   }

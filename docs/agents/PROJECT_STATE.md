@@ -1,5 +1,13 @@
 # Project state
 
+## DEC-001 recovery code handoff — 19 October 2026
+
+Commit follow-up: the user subsequently authorized a local commit of this increment. The no-commit/uncommitted statements below and in its evidence describe the pre-commit verification snapshot; inspect actual Git HEAD/status for the resulting commit. Push, deployment and external delivery remain unauthorized.
+
+Actual startup clean main / 0fc60a1. [ADR-012](../decisions/ADR-012-recovery-code-handoff.md) replaces generated bearer navigation URLs with a clean link and separate43-character code; no migration/provider/hash/session/MFA rewrite. Existing encrypted queued payloads remain compatible; legacy URL proof is rejected by UI and old history cannot be erased. [Evidence](../auth/DEC-001-HANDOFF-EVIDENCE-2026-10-19.md):15 PG recovery,10 auth,4 browser models, types/build and both HTTP smokes Passed. Browser B01–12 runner + B13–16/H01/H02 direct checks Passed; separate-tab recovery/refresh and a bounded4-entry history/code probe Passed. Not one uninterrupted automated18-case run or physical-device/provider proof.
+
+DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress. Local recommendation is not production approval. Latest [active handoff](handoff-2026-10-19-DEC-001-code.md) supersedes previous next-handoff task; old evidence remains dated. No commit/push/deploy/external provider/email or existing database reset. Next independent local task: shared recovery/login/TOTP abuse admission; production manual-code UX/risk and sender/host/budget/operator ownership, real callback/delivery/HTTPS/rotation/restore/load remain gates.
+
 ## DEC-001 browser recovery update — 19 October 2026
 
 Actual startup clean d4edac1; branch main confirmed at commit. [ADR-011](../decisions/ADR-011-browser-recovery-boundary.md) and [browser evidence](../auth/DEC-001-BROWSER-EVIDENCE-2026-10-19.md):16 real-browser cases Passed; hash-only/early fragment handling, strict acknowledgement, ID/EN/focus/retry UI and retained-field isolation corrected. Existing backend/migrations unchanged;4 model/protocol,10 auth and14 PG recovery checks plus types/build Passed. **Global browser-history confidentiality failed:** original bearer-fragment navigation URLs remain in global history despite visible/current-entry cleanup. Copy states this limit; no full history/sync secrecy or production-readiness claim.

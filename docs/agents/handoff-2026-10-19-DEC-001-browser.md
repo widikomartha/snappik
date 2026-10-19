@@ -1,5 +1,7 @@
 # DEC-001 browser recovery handoff — 19 October 2026
 
+Superseded for the next DEC-001 task by the [code handoff](handoff-2026-10-19-DEC-001-code.md) and ADR-012. The dated findings/results below remain historical evidence.
+
 Status: local browser corrections verified; **DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress**. Baseline clean d4edac1; current branch main. User authorized this local work and subsequently requested a commit; inspect actual Git HEAD/status for the resulting commit. No push/deploy/external provider/mail or existing database reset.
 
 Read [ADR-011](../decisions/ADR-011-browser-recovery-boundary.md), [evidence](../auth/DEC-001-BROWSER-EVIDENCE-2026-10-19.md), [sanitized results](../auth/DEC-001-BROWSER-RESULTS-2026-10-19.json). Prior handoff is historical; do not repeat implemented auth/reset/outbox work.

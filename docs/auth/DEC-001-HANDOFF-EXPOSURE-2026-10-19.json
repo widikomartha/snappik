@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-19",
+  "environment": "local Next production build / isolated PostgreSQL / synthetic delivery / in-app browser",
+  "history_probe": {
+    "entries": 4,
+    "credential_in_history": false,
+    "credential_in_console": false,
+    "limit": 100,
+    "scope": "one final synthetic recovery journey; exact code comparison; no original URLs retained"
+  },
+  "server_log_leak": false,
+  "network_url_referrer_leaks": 0,
+  "request_count": 1,
+  "physical_cross_device": "Not run",
+  "provider_delivery": "Not run"
+}

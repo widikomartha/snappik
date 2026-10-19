@@ -105,13 +105,15 @@ export async function settleRecovery(pool:pg.Pool,claim:RecoveryClaim,success:bo
 // Adapter must honor AbortSignal and use id as an idempotency key. A crash after delivery
 // before ack can duplicate delivery; the same token remains single-use.
 export async function deliverRecovery(pool:pg.Pool,key:Buffer,origin:string,
-  adapter:(message:{id:string;email:string;url:string},signal:AbortSignal)=>Promise<void>) {
+  adapter:(message:{id:string;email:string;url:string;code:string},signal:AbortSignal)=>Promise<void>) {
   const claim=await claimRecovery(pool);if(!claim)return 'idle';
   const abort=new AbortController();let timeout:ReturnType<typeof setTimeout>|undefined;
   let success=false;
   try {
     const data=open(key,claim.id,claim.payload);
-    await Promise.race([data.email?adapter({id:claim.id,email:data.email,url:`${origin}/recover#token=${data.token}`},abort.signal):Promise.resolve(),
+    // The credential is separate message content, NEVER a navigation URL. Existing
+    // encrypted queued payloads use the same format and safely deliver as codes.
+    await Promise.race([data.email?adapter({id:claim.id,email:data.email,url:`${origin}/recover?step=reset`,code:data.token},abort.signal):Promise.resolve(),
       new Promise<never>((_,reject)=>{timeout=setTimeout(()=>{abort.abort();reject(new Error('DELIVERY_TIMEOUT'));},5000);})]);
     success=true;
   }catch{/* Do not persist or log adapter errors, recipient, URL, token or payload. */}

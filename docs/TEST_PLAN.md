@@ -1,5 +1,7 @@
 # Test and release plan
 
+Current handoff validation: [ADR-012](decisions/ADR-012-recovery-code-handoff.md), [handoff evidence](auth/DEC-001-HANDOFF-EVIDENCE-2026-10-19.md).15 actual-PG recovery checks,10 auth regressions,4 browser models and built Next restart smokes Passed. Browser B01–12 runner and B13–16/H01/H02 direct CUA checks Passed: manual code, clean URL, separate tab/cookie-less reset, preview-like navigation, refresh/retry/DB failure/session invalidation and ID/EN. Bounded4-entry new-flow history probe found no actual code; not exhaustive history/sync/provider or physical-device proof. Historical fragment probe remains Failed for old generated URLs. Full T-001/003/015/016 and DEC-001 remain incomplete; see evidence for unexecuted cases.
+
 Status: application acceptance remains planned; **no full acceptance scenario is verified**. BL-001 and BL-002 executed bounded synthetic subsets, detailed below; BL-005 executed a design/prototype review subset. Fastpik live tests are research, not evidence that Snappik passes. Use deterministic clocks, synthetic Drive adapters and at least two tenants. Selected provider smoke tests run only against dedicated test accounts/folders.
 
 ## Fixtures and levels

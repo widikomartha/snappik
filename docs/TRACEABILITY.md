@@ -1,5 +1,7 @@
 # Requirements traceability
 
+DEC-001 code handoff: [ADR-012](decisions/ADR-012-recovery-code-handoff.md) / [handoff evidence](auth/DEC-001-HANDOFF-EVIDENCE-2026-10-19.md) maps REQ-AUTH-001/REQ-REL-001 to T-001 code/reset/history/retry subset and REQ-UX-001 to recovery ID/EN/keyboard/responsive subset. Existing BR-TEN/ONB/OPS invariants and15 real-PG recovery/10 auth regressions preserved. Browser/manual new-flow evidence cannot close full acceptance or approve production. BL-001/003/004 remain In progress.
+
 DEC-001 [browser increment](auth/DEC-001-BROWSER-EVIDENCE-2026-10-19.md): REQ-AUTH-001/REQ-REL-001 → T-001 recovery, old-cookie denial, uncertain response/dedupe/rollback subset; REQ-UX-001 → T-016 recovery ID/EN/keyboard/focus/responsive subset.16 positive browser cases Passed; no-global-history-retention failed/open. BL-001/003/004 and DEC-001 remain incomplete; core business/persistence/provider rules unchanged.
 
 DEC-001 [recovery increment](auth/DEC-001-RECOVERY-EVIDENCE-2026-10-19.md): REQ-AUTH-001 / REQ-REL-001 / BR-REL-001/002 → T-001 local durable request/reset/outbox/retry/race subset; REQ-TEN-001 / REQ-ONB-001 / BR-TEN-001 / BR-ONB-001 / BR-ENT-001 → T-002/003 preserved identity/studio/trial/audit and additive upgrade; REQ-OPS-001 / BR-OPS-001 → T-015 pending TOTP proof invalidated after reset with enrollment retained. Fourteen PG checks plus actual Next HTTP are synthetic delivery evidence, not full acceptance or production approval. BL-001/003/004 remain In progress; DEC-001 open.

@@ -2,7 +2,7 @@
 // No alternative browser driver, test-only product route, or secret artifact is used.
 import assert from 'node:assert/strict';
 export function recoveryBrowserCases({app,panel,browser,origin}) {
-  const results=[];let account={resetPassword:'Synthetic-browser-invalid!Password-4826'},link,usedLink;
+  const results=[],proofs=new Set();let account={resetPassword:'Synthetic-browser-invalid!Password-4826'},link,usedLink,code,usedCode;
   const status=()=>app.playwright.getByRole('status').innerText();
   const alert=()=>app.playwright.locator('main').getByRole('alert').innerText();
   async function control(action){
@@ -19,12 +19,12 @@ export function recoveryBrowserCases({app,panel,browser,origin}) {
     await app.playwright.getByText(/^Permintaan diterima\./).waitFor({state:'visible',timeoutMs:15000});
     return status();
   }
-  async function delivery(){await control('link');link=await panel.playwright.locator('#delivery').getAttribute('href');assert.ok(link,'SYNTHETIC_LINK_MISSING');return link;}
-  async function open(value=link){await app.goto(value);await app.playwright.waitForURL(origin+'/recover',{timeoutMs:5000});await app.playwright.getByLabel('Kata sandi baru',{exact:true}).waitFor({state:'visible'});assert.equal((await app.url()).includes('#'),false,'FRAGMENT_REMAINED');}
+  async function delivery(){await control('link');link=await panel.playwright.locator('#delivery').getAttribute('href');code=await panel.playwright.locator('#delivery-code').innerText();assert.ok(link,'SYNTHETIC_LINK_MISSING');assert.ok(code,'SYNTHETIC_CODE_MISSING');proofs.add(code);return link;}
+  async function open(value=link,proof=code){await app.goto(value);await app.playwright.waitForURL(origin+'/recover?step=reset',{timeoutMs:5000});await app.playwright.getByLabel('Kata sandi baru',{exact:true}).waitFor({state:'visible'});assert.equal((await app.url()).includes('#'),false,'FRAGMENT_REMAINED');await app.playwright.getByLabel('Kode pemulihan',{exact:true}).fill(proof);}
   async function submit(){await app.playwright.getByLabel('Kata sandi baru',{exact:true}).fill(account.resetPassword);await app.playwright.getByRole('button',{name:'Perbarui kata sandi',exact:true}).click();}
   async function success(){await app.playwright.getByText(/^Kata sandi diperbarui\./).waitFor({state:'visible',timeoutMs:15000});}
   async function uncertain(){const until=Date.now()+21000;for(;;){try{await app.playwright.getByText(/^Hasil belum dapat dipastikan\./).waitFor({state:'visible',timeoutMs:1000});return;}catch(error){if(Date.now()>=until)throw error;}}}
-  async function invalid(){await app.playwright.getByText(/^Tautan tidak valid/).waitFor({state:'visible',timeoutMs:10000});}
+  async function invalid(){await app.playwright.getByText(/^Kode tidak valid/).waitFor({state:'visible',timeoutMs:10000});}
   async function test(id,fn){try{await fn();results.push({id,status:'Passed'});}catch(error){const line=error.stack?.match(/recovery-browser-cases\.mjs[^\n]*?:\d+:\d+/)?.[0]??'unknown';results.push({id,status:'Failed'});throw new Error(`RECOVERY_BROWSER_CASE_FAILED:${id}:${error.name}:${line}:${typeof error.actual==='number'?error.actual:''}:${typeof error.expected==='number'?error.expected:''}`);}}
   async function login(password){await app.goto(origin+'/login');await app.playwright.getByLabel('Email',{exact:true}).fill(account.email);
     await app.playwright.getByLabel('Kata sandi',{exact:true}).fill(password);await app.playwright.getByRole('button',{name:'Masuk',exact:true}).click();}
@@ -38,14 +38,14 @@ export function recoveryBrowserCases({app,panel,browser,origin}) {
       await test('B02-browser-login-reset-old-sessions',async()=>{
         await login(account.password);await app.playwright.waitForURL(origin+'/onboarding?return_to=/app',{timeoutMs:15000});
         // The known request already queued its link; unknown delivery never invokes the sink.
-        await delivery();await open();await submit();await success();usedLink=link;
+        await delivery();await open();await submit();await success();usedLink=link;usedCode=code;
         assert.equal(await app.playwright.getByLabel('Kata sandi baru',{exact:true}).count(),0);
         const verified=await control('verify');assert.deepEqual(verified.old_sessions,[401,401]);assert.equal(verified.old_password,401);assert.equal(verified.new_password,200);assert.equal(verified.version,2);
         await app.goto(origin+'/app');await app.playwright.getByRole('heading',{name:'Masuk ke Snappik'}).waitFor({state:'visible'});
         await login(account.password);await app.playwright.getByText('Tidak dapat masuk. Periksa kredensial atau kode Anda.').waitFor({state:'visible'});
         await login(account.resetPassword);await app.playwright.waitForURL(origin+'/onboarding?return_to=/app',{timeoutMs:15000});
       });
-      await test('B03-consumed-and-hash-navigation',async()=>{await app.goto(origin+'/recover');await open(usedLink);await submit();await invalid();});
+      await test('B03-consumed-code',async()=>{await app.goto(origin+'/recover');await open(usedLink,usedCode);await submit();await invalid();});
     },
     async errors(){
       await test('B04-malformed-duplicate-missing',async()=>{
@@ -53,9 +53,9 @@ export function recoveryBrowserCases({app,panel,browser,origin}) {
           await app.goto(origin+'/recover'+hash);await app.playwright.waitForURL(origin+'/recover',{timeoutMs:5000});await invalid();assert.equal((await app.url()).includes('#'),false);assert.equal(await app.playwright.getByLabel('Kata sandi baru',{exact:true}).count(),0);
         }
         await app.reload();await app.playwright.getByLabel('Email',{exact:true}).waitFor({state:'visible'});assert.equal(await app.playwright.getByLabel('Email',{exact:true}).count(),1);
-        assert.ok((await app.playwright.getByText(/Jika halaman dimuat ulang/).innerText()).length>0);
+        assert.ok((await app.playwright.getByText(/Minta kode pemulihan/).innerText()).length>0);
       });
-      await test('B05-invalid-well-formed',async()=>{await open(origin+'/recover#token='+'A'.repeat(43));await submit();await invalid();});
+      await test('B05-invalid-well-formed',async()=>{await open(origin+'/recover?step=reset','A'.repeat(43));await submit();await invalid();});
       await test('B06-expired',async()=>{await seed();await request();await delivery();await control('expire-token');await open();await submit();await invalid();
         const state=await control('verify');assert.equal(state.old_password,200);assert.equal(state.new_password,401);assert.equal(state.version,1);});
       await test('B07-short-password-denied',async()=>{await seed();await request();await delivery();await open();
@@ -77,10 +77,10 @@ export function recoveryBrowserCases({app,panel,browser,origin}) {
         assert.equal((await control('audit')).requests_count,before+1);
         if((await app.playwright.locator('main').innerText()).includes('Hasil belum dapat dipastikan')){await app.playwright.getByRole('button',{name:'Minta pemulihan',exact:true}).click();await app.playwright.getByText(/^Permintaan diterima\./).waitFor({state:'visible'});}
         assert.equal((await control('audit')).requests_count,before+1);});
-      await test('B11-reset-response-loss-and-refresh',async()=>{await delivery();await open();await control('drop-after reset-password');await submit();await app.playwright.getByText(/^(Hasil belum dapat dipastikan|Tautan tidak valid)/).waitFor({state:'visible'});
+      await test('B11-reset-response-loss-and-refresh',async()=>{await delivery();await open();await control('drop-after reset-password');await submit();await app.playwright.getByText(/^(Hasil belum dapat dipastikan|Kode tidak valid)/).waitFor({state:'visible'});
         const state=await control('verify');assert.equal(state.new_password,200);assert.equal(state.old_password,401);assert.equal(state.version,2);
-        await submit();await invalid();const consumed=(await control('audit')).consumed;await app.reload();await app.playwright.getByLabel('Email',{exact:true}).waitFor({state:'visible'});
-        assert.equal(await app.playwright.getByLabel('Email',{exact:true}).count(),1);assert.equal((await control('audit')).consumed,consumed);});
+        await submit();await invalid();const consumed=(await control('audit')).consumed;await app.reload();await app.playwright.getByLabel('Kode pemulihan',{exact:true}).waitFor({state:'visible'});
+        assert.equal(await app.playwright.getByLabel('Kode pemulihan',{exact:true}).getAttribute('value'),null);assert.equal((await control('audit')).consumed,consumed);});
       await test('B12-session-expiry-independent-reset',async()=>{await seed();await request();await delivery();await control('expire-sessions');await open();await submit();await success();
         const state=await control('verify');assert.deepEqual(state.old_sessions,[401,401]);assert.equal(state.new_password,200);});
     },
@@ -112,5 +112,6 @@ export function recoveryBrowserCases({app,panel,browser,origin}) {
   };
   return {run:async(name)=>{if(!sections[name])throw new Error('UNKNOWN_SECTION');await sections[name]();return results;},results,
     // URLs intentionally stay in this object's closure and never enter the results artifact.
+    inspectExposure:(entries,logs)=>({entries:entries.length,credential_in_history:entries.some(entry=>[...proofs].some(value=>entry.url.includes(value))),credential_in_console:logs.some(entry=>[...proofs].some(value=>entry.message.includes(value)))}),
     audit:()=>control('audit')};
 }
