@@ -1,5 +1,7 @@
 # DEC-001 password recovery handoff — 19 October 2026
 
+Resume pointer: [browser recovery handoff](handoff-2026-10-19-DEC-001-browser.md) supersedes the next-browser task below. Sixteen browser cases now Passed; global-history token retention remains an observed open security gate. This older record retains its dated implementation evidence.
+
 Commit follow-up: the user subsequently authorized a local commit of the hardening/recovery work below. Uncommitted/no-commit statements capture the implementation verification snapshot before that request; inspect actual Git HEAD/status for the resulting commit. No push/deployment/external delivery was authorized by this follow-up.
 
 Task: continue recovery/reset/session-security validation. Status: **local subset implemented; DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress**. Branch/HEAD: master / `829a46b`. Starting worktree already contained the prior uncommitted hardening; all inherited work preserved. No commit/push/deploy/external provider/email/paid provisioning or existing database reset.

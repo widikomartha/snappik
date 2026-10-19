@@ -1,5 +1,7 @@
 # Requirements traceability
 
+DEC-001 [browser increment](auth/DEC-001-BROWSER-EVIDENCE-2026-10-19.md): REQ-AUTH-001/REQ-REL-001 → T-001 recovery, old-cookie denial, uncertain response/dedupe/rollback subset; REQ-UX-001 → T-016 recovery ID/EN/keyboard/focus/responsive subset.16 positive browser cases Passed; no-global-history-retention failed/open. BL-001/003/004 and DEC-001 remain incomplete; core business/persistence/provider rules unchanged.
+
 DEC-001 [recovery increment](auth/DEC-001-RECOVERY-EVIDENCE-2026-10-19.md): REQ-AUTH-001 / REQ-REL-001 / BR-REL-001/002 → T-001 local durable request/reset/outbox/retry/race subset; REQ-TEN-001 / REQ-ONB-001 / BR-TEN-001 / BR-ONB-001 / BR-ENT-001 → T-002/003 preserved identity/studio/trial/audit and additive upgrade; REQ-OPS-001 / BR-OPS-001 → T-015 pending TOTP proof invalidated after reset with enrollment retained. Fourteen PG checks plus actual Next HTTP are synthetic delivery evidence, not full acceptance or production approval. BL-001/003/004 remain In progress; DEC-001 open.
 
 Status: full application acceptance remains **incomplete**. BL-001 has a verified synthetic auth subset documented in [evidence](auth/BL-001-EVIDENCE.md); this does not pass full T-001 or T-015. BL-002's [evidence](drive/BL-002-EVIDENCE.md) maps a 29-check offline feasibility subset to T-005/T-013/T-017/T-022 implications; none is full acceptance. Short labels in other docs refer to the full `REQ-*` IDs here. Business Rules owns behavioral definitions; Backlog owns work ordering.

@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-19",
+  "baseline": "d4edac1",
+  "mode": "isolated Next/PostgreSQL; synthetic in-memory delivery",
+  "browser": "Codex in-app browser; exact engine version unavailable",
+  "cases": [
+    {
+      "id": "B01-known-unknown",
+      "status": "Passed"
+    },
+    {
+      "id": "B02-browser-login-reset-old-sessions",
+      "status": "Passed"
+    },
+    {
+      "id": "B03-consumed-and-hash-navigation",
+      "status": "Passed"
+    },
+    {
+      "id": "B04-malformed-duplicate-missing",
+      "status": "Passed"
+    },
+    {
+      "id": "B05-invalid-well-formed",
+      "status": "Passed"
+    },
+    {
+      "id": "B06-expired",
+      "status": "Passed"
+    },
+    {
+      "id": "B07-short-password-denied",
+      "status": "Passed"
+    },
+    {
+      "id": "B08-persistence-failure-and-retry",
+      "status": "Passed"
+    },
+    {
+      "id": "B09-html200-no-false-success",
+      "status": "Passed"
+    },
+    {
+      "id": "B10-request-response-loss-dedupe",
+      "status": "Passed"
+    },
+    {
+      "id": "B11-reset-response-loss-and-refresh",
+      "status": "Passed"
+    },
+    {
+      "id": "B12-session-expiry-independent-reset",
+      "status": "Passed"
+    },
+    {
+      "id": "B13-loading-disabled-and-deadline",
+      "status": "Passed"
+    },
+    {
+      "id": "B14-locales-keyboard-and-reset-state",
+      "status": "Passed"
+    },
+    {
+      "id": "B15-responsive-320-768-1440",
+      "status": "Passed"
+    },
+    {
+      "id": "B16-request-referrer-server-log-redaction",
+      "status": "Passed"
+    }
+  ],
+  "history": {
+    "status": "Failed",
+    "requirement": "No token retained in global browser history",
+    "observed": "13 bounded synthetic recovery history entries; at least one retained its original token fragment. Visible URL and current entry were scrubbed. No raw URLs or tokens saved."
+  }
+}

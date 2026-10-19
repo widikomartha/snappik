@@ -1,11 +1,10 @@
 import {readConfig} from '../../config';
 import {RecoveryForm} from './recovery-form';
+import {recoveryBootstrap} from '../../modules/auth/recovery-browser';
 export const dynamic='force-dynamic';
-export default function Recover() {
+export default async function Recover({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const config=readConfig();
-  return <main><h1>Pemulihan akun</h1>{config.authMode==='better-auth-local'&&config.recoveryKey?
-    <><p>Mode lokal: pengiriman email eksternal belum tersedia. Formulir ini menerima permintaan pemulihan untuk pengujian lokal.</p><RecoveryForm /></>:
-    <p>Pemulihan akun menunggu konfigurasi layanan autentikasi.</p>}
-    <p>Jika menggunakan akun dari penyedia lain, pulihkan akses melalui penyedia akun tersebut.</p>
-    <a href="/login">Kembali ke halaman masuk</a></main>;
+  const locale=(await searchParams).lang==='en'?'en':'id';
+  return <><script dangerouslySetInnerHTML={{__html:recoveryBootstrap}} />
+    <RecoveryForm enabled={Boolean(config.authMode==='better-auth-local'&&config.recoveryKey)} initialLocale={locale}/></>;
 }

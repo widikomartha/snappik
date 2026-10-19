@@ -20,6 +20,8 @@
     "test:smoke": "tsx scripts/smoke.ts",
     "test:auth": "tsx --test --test-concurrency=1 tests/auth.test.ts",
     "test:recovery": "tsx --test --test-concurrency=1 tests/recovery.test.ts",
+    "test:recovery:browser-contract": "tsx --test tests/recovery-browser.test.ts",
+    "test:recovery:browser-lab": "tsx scripts/recovery-browser-lab.ts",
     "auth:recovery:drain": "tsx --env-file-if-exists=.env.local src/modules/auth/recovery-drain-cli.ts",
     "test:auth:smoke": "tsx scripts/auth-smoke.ts",
     "db:auth:migrate": "tsx --env-file-if-exists=.env.local src/db/auth-migrate-cli.ts",

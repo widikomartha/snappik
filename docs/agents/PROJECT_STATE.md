@@ -1,5 +1,11 @@
 # Project state
 
+## DEC-001 browser recovery update — 19 October 2026
+
+Actual startup clean d4edac1; branch main confirmed at commit. [ADR-011](../decisions/ADR-011-browser-recovery-boundary.md) and [browser evidence](../auth/DEC-001-BROWSER-EVIDENCE-2026-10-19.md):16 real-browser cases Passed; hash-only/early fragment handling, strict acknowledgement, ID/EN/focus/retry UI and retained-field isolation corrected. Existing backend/migrations unchanged;4 model/protocol,10 auth and14 PG recovery checks plus types/build Passed. **Global browser-history confidentiality failed:** original bearer-fragment navigation URLs remain in global history despite visible/current-entry cleanup. Copy states this limit; no full history/sync secrecy or production-readiness claim.
+
+DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress. Latest [active handoff](handoff-2026-10-19-DEC-001-browser.md) supersedes the prior next-browser task. Next: review a handoff avoiding bearer navigation URLs or an explicit evidenced risk disposition; no silent protocol/provider rewrite. External sender/provider/HTTPS/operator/abuse/rotation/restore/budget gates remain. User subsequently authorized a local commit; actual Git owns commit state. No push/deployment/external mail.
+
 ## DEC-001 password recovery update — 19 October 2026
 
 Commit follow-up: the user subsequently authorized committing this local hardening/recovery increment. The no-commit/dirty-worktree statements below describe its pre-commit verification snapshot; actual Git HEAD/status owns current commit state. Push, deployment and external delivery remain unauthorized.
