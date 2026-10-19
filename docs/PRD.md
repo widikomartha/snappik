@@ -12,12 +12,14 @@ The core outcome is: **a studio creates a project, a client selects and confirms
 
 | Actor | MVP capability |
 |---|---|
-| Visitor | Product information, help, register/login |
+| Visitor | Product information, help, invitation acceptance/login for the initial pilot; public registration in a later owner-acquisition slice |
 | Studio owner | Setup, projects, source sync, link controls, selection monitoring, export and entitlement visibility |
 | Client | Open authorized gallery, select/note/review/confirm, download when enabled |
 | Platform operator | Tenant diagnostics and explicit, audited entitlement changes/suspension; no routine gallery browsing |
 
-MVP permits one owner membership per studio and one studio per owner. Keep membership records for future staff roles, but do not expose invitation or role-editing UI. Operator authority is separate from studio membership.
+MVP permits one owner membership per studio and one studio per owner. Keep membership records for future staff roles, but do not expose staff-invitation or role-editing UI. Operator authority is separate from studio membership.
+
+[ADR-015](decisions/ADR-015-auth-architecture-conditional-approval.md): the product owner approved an invitation-only **studio-owner acquisition pilot** on19 October. Public registration remains planned later. Owner acquisition invitations are distinct from deferred staff/team invitations; the latter UI prohibition above remains. Real invitation acceptance and email verification must be implemented and tested under BL-004; synthetic seeded accounts do not satisfy this requirement. Conditional Better Auth+PG direction approval does not complete MVP authentication or authorize release.
 
 ## MVP requirements
 

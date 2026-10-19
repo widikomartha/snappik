@@ -15,7 +15,7 @@ export async function assertSession(tx: pg.PoolClient, userId: string, sessionId
   if (!active.rowCount) throw new SetupError('AUTH_REQUIRED');
 }
 
-export async function attachSession(pool: pg.Pool, namespace: string, sessionId: string, subject: string) {
+export async function attachSession(pool: pg.Pool, namespace: string, sessionId: string, subject: string, challenge?:string) {
   // Called only after a new library session is persisted. Missing metadata never authorizes.
   await transaction(pool, async tx => {
     const account = (await tx.query('SELECT email,name,"emailVerified" FROM snappik_auth."user" WHERE id=$1',[subject])).rows[0];
@@ -23,6 +23,13 @@ export async function attachSession(pool: pg.Pool, namespace: string, sessionId:
     await tx.query(`INSERT INTO public.users(auth_provider,auth_subject,email_normalized,display_name)
       VALUES($1,$2,$3,$4) ON CONFLICT(auth_provider,auth_subject) DO NOTHING`,[namespace,subject,account.email.toLowerCase(),account.name]);
     const user = (await tx.query('SELECT id,security_version FROM public.users WHERE auth_provider=$1 AND auth_subject=$2 FOR UPDATE',[namespace,subject])).rows[0];
+    if(challenge) {
+      // Bind before metadata can authorize, even if native response/outer request is lost.
+      const claimed=await tx.query(`UPDATE snappik_auth.totp_challenge_security SET session_id=$2 WHERE challenge_hash=$1 AND user_id=$3
+        AND security_version=$4 AND revoked_at IS NULL AND session_id IS NULL AND expires_at>clock_timestamp() RETURNING challenge_hash`,
+        [challenge,sessionId,user.id,user.security_version]);
+      if(claimed.rowCount!==1)throw new SetupError('AUTH_REQUIRED');
+    }
     await tx.query(`INSERT INTO public.owner_session_security(session_id,user_id,security_version)
       SELECT id,$2,$3 FROM snappik_auth.session WHERE id=$1 AND "userId"=$4
       ON CONFLICT(session_id) DO NOTHING`,[sessionId,user.id,user.security_version,subject]);
@@ -46,13 +53,14 @@ export async function secureSession(pool: pg.Pool, namespace: string, raw: {
 }
 
 export async function revokeSession(pool: pg.Pool, namespace: string, subject: string, sessionId: string) {
-  await transaction(pool, async tx => {
+  await transaction(pool,tx=>revokeSessionInTransaction(tx,namespace,subject,sessionId));
+}
+export async function revokeSessionInTransaction(tx:pg.PoolClient,namespace:string,subject:string,sessionId:string) {
     const user = (await tx.query('SELECT id FROM public.users WHERE auth_provider=$1 AND auth_subject=$2 FOR UPDATE',[namespace,subject])).rows[0];
     if (!user) throw new Error('AUTH_SECURITY_METADATA_MISSING');
     const revoked = await tx.query(`UPDATE public.owner_session_security SET revoked_at=COALESCE(revoked_at,clock_timestamp()),
       mfa_verified_at=NULL,mfa_method=NULL WHERE session_id=$1 AND user_id=$2 RETURNING session_id`,[sessionId,user.id]);
     if (!revoked.rowCount) throw new Error('AUTH_SECURITY_METADATA_MISSING');
-  });
 }
 
 export async function recordTotp(pool: pg.Pool, namespace: string, subject: string, sessionId: string) {

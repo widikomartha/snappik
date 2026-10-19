@@ -40,6 +40,14 @@ async function lostRecovery(body:unknown){
     await new Promise<void>((resolve,reject)=>{const request=http.request(`http://127.0.0.1:${(proxy.address() as net.AddressInfo).port}`,{method:'POST'},response=>{response.resume();reject(new Error('EXPECTED_LOST_RESPONSE'));});request.once('error',()=>resolve());request.end();});
   }finally{proxy.closeAllConnections();await new Promise<void>(resolve=>proxy.close(()=>resolve()));}
 }
+async function lostLogout(cookie:string){
+  let status=0;
+  const proxy=http.createServer(async(_request,response)=>{try{const result=await post(0,'/sign-out',{},cookie);status=result.status;await result.text();}finally{response.destroy();}});
+  try{await new Promise<void>(resolve=>proxy.listen(0,'127.0.0.1',resolve));
+    await new Promise<void>((resolve,reject)=>{const request=http.request(`http://127.0.0.1:${(proxy.address() as net.AddressInfo).port}`,{method:'POST'},response=>{response.resume();reject(new Error('EXPECTED_LOST_LOGOUT_RESPONSE'));});request.once('error',()=>resolve());request.end();});
+    assert.equal(status,200,'logout committed before loopback proxy dropped its response');
+  }finally{proxy.closeAllConnections();await new Promise<void>(resolve=>proxy.close(()=>resolve()));}
+}
 try {
   await migrate(pool);await migrateAuth(pool);fixture=testAuthentication(db.connectionString,origin,secret,[],key,policy);await fixture.register('admission-owner@example.test');
   await Promise.all([start(0),start(1)]);
@@ -86,6 +94,20 @@ try {
   await db.server.stop();assert.equal((await post(0,'/two-factor/verify-totp',{code},proof)).status,503);await db.server.start();
   assert.equal((await post(1,'/two-factor/verify-totp',{code},proof)).status,429);await expire();
   const fresh=(await fixture.library.api.generateTOTP({body:{secret:factorSecret}})).code;
-  assert.equal((await post(1,'/two-factor/verify-totp',{code:fresh},proof)).status,200);
-  console.log('Passed: two built Next processes share account/native/reset/recovery/TOTP admission; spoofed headers fail; process/DB restart retain denial; lost HTTP recovery acknowledgement dedupes; expiry permits valid reset/MFA; copied session denied. Synthetic loopback only.');
+  const completed=await post(1,'/two-factor/verify-totp',{code:fresh},proof);assert.equal(completed.status,200);
+  const completedCookie=completed.headers.getSetCookie().map(value=>value.split(';')[0]).join('; ');
+  assert.equal((await fetch(origin+'/api/v1/me',{headers:{cookie:completedCookie}})).status,200);
+  await lostLogout(proof); // Original pending cookie only, no completed-session cookie.
+  assert.equal((await post(1,'/sign-out',{},proof)).status,200);
+  assert.equal((await fetch(origin+'/api/v1/me',{headers:{cookie:completedCookie}})).status,401);
+  await stop(children[1]);await start(1);await expire();
+  assert.equal((await post(1,'/two-factor/verify-totp',{code:fresh},proof)).status,401);
+  await expire();
+  const pending=await post(0,'/sign-in/email',{email:factorEmail,password:testPassword});assert.equal(pending.status,200);
+  const pendingCookie=pending.headers.getSetCookie().map(value=>value.split(';')[0]).join('; ');
+  assert.equal((await fetch(origin+'/api/v1/me',{headers:{cookie:pendingCookie}})).status,401);
+  assert.equal((await post(1,'/sign-out',{},pendingCookie)).status,200);
+  await db.server.stop();await db.server.start();await expire();
+  assert.equal((await post(0,'/two-factor/verify-totp',{code:(await fixture.library.api.generateTOTP({body:{secret:factorSecret}})).code},pendingCookie)).status,401);
+  console.log('Passed: two built Next processes share authentication admission and TOTP lifecycle; spoofed headers fail; process/DB restart retain denial; lost recovery acknowledgement dedupes; lost logout acknowledgement retries safely; original pending proof revokes its resulting session and cannot complete after logout. Synthetic loopback only.');
 }finally{await Promise.all(children.map(stop));await fixture?.close();await pool.end();await db.server.stop();}

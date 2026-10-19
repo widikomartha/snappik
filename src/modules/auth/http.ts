@@ -1,12 +1,13 @@
 import type pg from 'pg';
 import {randomUUID} from 'node:crypto';
 import type { createLibrary } from './library.js';
-import { recordTotp, revokeSession, secureSession } from './security.js';
+import { recordTotp, revokeSessionInTransaction, secureSession } from './security.js';
 import { safeOwnerReturn } from '../onboarding/policy.js';
 import {credentialGate} from './gate.js';
 import {requestRecovery,resetRecovery,InvalidRecovery,type RecoveryOptions} from './recovery.js';
 import {AdmissionDenied} from './admission.js';
 import type {AuthOperation} from './admission-policy.js';
+import {authCookies,signedChallenge,challengeHash,registerChallenge,pendingChallenge,cancelChallenge,InvalidAuthCookie} from './challenge.js';
 
 const responseHeaders={'Cache-Control':'no-store','Referrer-Policy':'no-referrer','X-Content-Type-Options':'nosniff'};
 export function createAuthentication(library:ReturnType<typeof createLibrary>,pool:pg.Pool,origin:string,instanceId:string,recovery?:RecoveryOptions) {
@@ -63,10 +64,15 @@ export function createAuthentication(library:ReturnType<typeof createLibrary>,po
         if(Object.keys(body).length)return fail(400,'INVALID_INPUT');
         // Must distinguish absent credentials from unavailable authoritative storage.
         await library.admission.checkPolicy();
-        const current=await rawSession(request);
-        if(current)await revokeSession(pool,namespace,current.user.id,current.session.id);
-        // Success now rests on committed revocation, never the library's deletion response.
         const context=await library.$context;
+        const proof=authCookies(request.headers,[context.createAuthCookie('two_factor').name,context.authCookies.sessionToken.name]);
+        const pending=signedChallenge(proof.get(context.createAuthCookie('two_factor').name),context.secret);
+        await gate(async tx=>{
+          const current=await rawSession(request);
+          if(current)await revokeSessionInTransaction(tx,namespace,current.user.id,current.session.id);
+          if(pending)await cancelChallenge(tx,namespace,pending);
+        });
+        // Success now rests on committed revocation, never the library's deletion response.
         const headers=new Headers(responseHeaders);
         for(const cookie of [context.authCookies.sessionToken,context.authCookies.sessionData,context.authCookies.dontRememberToken,context.createAuthCookie('two_factor')]) {
           headers.append('Set-Cookie',`${cookie.name}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${origin.startsWith('https:')?'; Secure':''}`);
@@ -85,14 +91,7 @@ export function createAuthentication(library:ReturnType<typeof createLibrary>,po
       else {
         const context=await library.$context;
         const names=[context.createAuthCookie('two_factor').name,context.authCookies.sessionToken.name];
-        const proof=new Map<string,string>();
-        for(const pair of (request.headers.get('cookie')??'').split(';')) {
-          const at=pair.indexOf('=');if(at<0)continue;const name=pair.slice(0,at).trim();if(!names.includes(name))continue;
-          if(proof.has(name))return fail(400,'INVALID_INPUT');
-          let value=pair.slice(at+1).trim();if(value.startsWith('"'))value=value.slice(1,-1);
-          try{value=decodeURIComponent(value);}catch{/* Native parser keeps undecodable text too. */}
-          proof.set(name,value);
-        }
+        const proof=authCookies(request.headers,names);
         const current=await rawSession(request),pending=proof.get(names[0])??'',dot=pending.lastIndexOf('.');
         // Native cookies permit quoted/percent-encoded equivalents. Budget the
         // verified account, or canonical pending identifier (not signature spelling).
@@ -100,16 +99,34 @@ export function createAuthentication(library:ReturnType<typeof createLibrary>,po
         await library.admission.subject('totp',current?`account:${current.user.id}`:dot>0?`pending:${pending.slice(0,dot)}`:'no-proof');
       }
       const payload=path==='/sign-in/email'?{email:(body.email as string).trim().toLowerCase(),password:body.password}:{code:body.code,trustDevice:false};
-      return await gate(async()=>{
+      return await gate(async tx=>{
       // The gate covers password proof, session attachment and pending TOTP creation/consumption.
       // Reset cannot interleave between old proof and a newly stamped security version.
-      const result=await library.handler(new Request(`${origin}/api/auth${path}`,{method:'POST',headers:request.headers,body:JSON.stringify(payload)}));
+      let completion:string|undefined;
+      if(path==='/two-factor/verify-totp') {
+        const current=await rawSession(request);
+        if(current) {if(!await secureSession(pool,namespace,current))return fail(401,'AUTH_REQUIRED');}
+        else {
+          const context=await library.$context,name=context.createAuthCookie('two_factor').name;
+          const pending=signedChallenge(authCookies(request.headers,[name,context.authCookies.sessionToken.name]).get(name),context.secret);
+          if(!pending||!await pendingChallenge(tx,namespace,pending))return fail(401,'AUTH_REQUIRED');
+          completion=challengeHash(namespace,pending);
+        }
+      }
+      const result=await library.withChallenge(completion,()=>library.handler(new Request(`${origin}/api/auth${path}`,{method:'POST',headers:request.headers,body:JSON.stringify(payload)})));
       if(!result.ok){if(result.status===429){const value=Number(result.headers.get('X-Retry-After'));
           // Native account-lockout errors omit the HTTP limiter's header. The
           // pinned default is 900s; use that conservative upper bound, not 10s.
           return fail(429,'RATE_LIMITED',Number.isInteger(value)&&value>0&&value<=3600?value:path==='/two-factor/verify-totp'?900:10);}
         return fail(result.status>=500?503:result.status,'AUTHENTICATION_FAILED');}
       const data=await result.json();
+      if(path==='/sign-in/email'&&data.twoFactorRedirect) {
+        const context=await library.$context,name=context.createAuthCookie('two_factor').name;
+        const cookie=new Headers({cookie:result.headers.getSetCookie().map(value=>value.split(';')[0]).join('; ')});
+        const pending=signedChallenge(authCookies(cookie,[name]).get(name),context.secret);
+        if(!pending)throw new Error('CHALLENGE_NOT_AVAILABLE');
+        await registerChallenge(tx,namespace,pending);
+      }
       const headers=new Headers(responseHeaders);
       for(const cookie of result.headers.getSetCookie())headers.append('Set-Cookie',cookie);
       if(path==='/two-factor/verify-totp') {
@@ -122,7 +139,7 @@ export function createAuthentication(library:ReturnType<typeof createLibrary>,po
       }
       return Response.json({success:true,...(data.twoFactorRedirect?{two_factor_required:true}:{return_to:destination})},{headers});
       });
-    } catch(error) {return error instanceof AdmissionDenied?fail(429,'RATE_LIMITED',error.retryAfter):
+    } catch(error) {return error instanceof InvalidAuthCookie?fail(400,'INVALID_INPUT'):error instanceof AdmissionDenied?fail(429,'RATE_LIMITED',error.retryAfter):
       error instanceof InvalidRecovery?fail(400,'INVALID_OR_EXPIRED_RESET'):fail(503,'TEMPORARILY_UNAVAILABLE');}
   }
   return {library,resolveSession,handle};

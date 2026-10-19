@@ -66,6 +66,8 @@ export async function resetRecovery(tx:pg.PoolClient,namespace:string,token:stri
     mfa_verified_at=NULL,mfa_method=NULL WHERE user_id IN
       (SELECT id FROM public.users WHERE auth_provider=$1 AND auth_subject=$2)`,[namespace,recovery.user_id]);
   // Pending primary proof and trusted-device records must not survive reset.
+  await tx.query(`UPDATE snappik_auth.totp_challenge_security SET revoked_at=COALESCE(revoked_at,clock_timestamp())
+    WHERE user_id IN(SELECT id FROM public.users WHERE auth_provider=$1 AND auth_subject=$2)`,[namespace,recovery.user_id]);
   await tx.query(`DELETE FROM snappik_auth.verification WHERE value=$1 AND
     (identifier LIKE '2fa-%' OR identifier LIKE 'trust-device-%')`,[recovery.user_id]);
   await tx.query(`UPDATE snappik_auth.password_recovery SET consumed_at=COALESCE(consumed_at,clock_timestamp()) WHERE user_id=$1`,[recovery.user_id]);

@@ -1,5 +1,7 @@
 # DEC-001 shared admission handoff — 19 October 2026
 
+Next-task guidance superseded by the [pending TOTP lifecycle handoff](handoff-2026-10-19-DEC-001-totp.md). The investigation below was historical open work; ADR-014/current evidence now records the demonstrated gap, correction and focused Closure Audit next task.
+
 Commit follow-up: the user subsequently authorized a local commit of this increment. No-commit/uncommitted statements below describe the pre-commit verification snapshot; actual Git HEAD/status owns current commit state. Push, deployment and external services remain unauthorized.
 
 Status: implemented local subset/ready for review; **DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress**. Starting actual main / `7e6ba85`, clean. This increment uncommitted; no current commit/push/deploy/external provider/sender/paid provisioning or destructive existing-data operation authorization. Prior commit requests applied only to prior increments. Inspect actual Git every chat.

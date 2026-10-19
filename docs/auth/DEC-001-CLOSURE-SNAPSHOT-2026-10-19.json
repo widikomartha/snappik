@@ -1,0 +1,236 @@
+{
+  "audit_date": "2026-10-19",
+  "kind": "read-only source identity, not a test execution or approval",
+  "git_head": "2fb68dfe973239cd93574e3d0e68231085416f36",
+  "branch": "main",
+  "inherited_status": [
+    " M README.md",
+    " M docs/API.md",
+    " M docs/ARCHITECTURE.md",
+    " M docs/BACKLOG.md",
+    " M docs/DATABASE.md",
+    " M docs/DEPLOYMENT.md",
+    " M docs/SECURITY.md",
+    " M docs/TEST_PLAN.md",
+    " M docs/TRACEABILITY.md",
+    " M docs/USER_FLOWS.md",
+    " M docs/agents/PROJECT_STATE.md",
+    " M docs/agents/handoff-2026-10-19-DEC-001-admission.md",
+    " M docs/auth/SESSION_CONTRACT.md",
+    " M docs/decisions/README.md",
+    " M package.json",
+    " M scripts/admission-smoke.ts",
+    " M src/db/auth-grants.sql",
+    " M src/db/auth-migrate.ts",
+    " M src/modules/auth/http.ts",
+    " M src/modules/auth/library.ts",
+    " M src/modules/auth/recovery.ts",
+    " M src/modules/auth/security.ts",
+    "?? docs/agents/handoff-2026-10-19-DEC-001-totp.md",
+    "?? docs/auth/DEC-001-TOTP-EVIDENCE-2026-10-19.md",
+    "?? docs/decisions/ADR-014-totp-challenge-lifecycle.md",
+    "?? src/db/auth-migrations/006_totp_challenge_security.sql",
+    "?? src/modules/auth/challenge.ts",
+    "?? tests/fixtures/totp-observer.ts",
+    "?? tests/totp-lifecycle.test.ts"
+  ],
+  "normalization": "UTF-8 text, CRLF replaced by LF before SHA256",
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256_lf": "6232305a8688c449969154aba9d3d8313204205e1e1c24f8ac295bbe7af7f664"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256_lf": "6201ab114dadb02c77a0683014e7bc2afa6b14b0e21e61deb3e3253730aee3d2"
+    },
+    {
+      "path": "package.json",
+      "sha256_lf": "02c95fdc69bbce2041d262a0136d30195aa46a069e08844f3636d226037f6bb9"
+    },
+    {
+      "path": "scripts/admission-smoke.ts",
+      "sha256_lf": "260c9288344d39893f0d5b9594d669938580691a28bd1ba3104acc5ebad2faed"
+    },
+    {
+      "path": "scripts/auth-smoke.ts",
+      "sha256_lf": "3ef304256e31c65131b520366dde702301fbd6c1f8593b5e5432b091f7431cd6"
+    },
+    {
+      "path": "scripts/recovery-browser-cases.mjs",
+      "sha256_lf": "5773535fe8255f59d4b6f9b6cbc5e8c457157370a55f47c19b4bea911be99cb3"
+    },
+    {
+      "path": "scripts/recovery-browser-lab.ts",
+      "sha256_lf": "aa9f3929cc531cc9f489833eed2c3b349a6beced052fafca0e6277fa317846ff"
+    },
+    {
+      "path": "scripts/test-postgres.ts",
+      "sha256_lf": "ac90d30ac2d335a826986e2673a9aac008f3bcca7694038352e57e38a6aafcef"
+    },
+    {
+      "path": "src/app/api/auth/[...all]/route.ts",
+      "sha256_lf": "3d04eb07009ac66e060cfded54ea28ca709df24c4c086bf264084025322e3205"
+    },
+    {
+      "path": "src/app/login/login-form.tsx",
+      "sha256_lf": "36fb44ef1caab5014afe65ce39c53eacaf2f4f1f52659e1da6840e251cd5b218"
+    },
+    {
+      "path": "src/app/recover/page.tsx",
+      "sha256_lf": "993bb8ed851ce7a71d9353806cf5f0c313b529bac330880ec6a77d429bfdde41"
+    },
+    {
+      "path": "src/app/recover/recovery-form.tsx",
+      "sha256_lf": "b44ae80933bc0c4acf458cdf153bc34be5af5eb16adf0ec27a085a1d364428d0"
+    },
+    {
+      "path": "src/app/recover/strings.ts",
+      "sha256_lf": "1366b2966b5c118e97cf748c1e9aa2318422c90d974b6c58350f01285c2b68a2"
+    },
+    {
+      "path": "src/config.ts",
+      "sha256_lf": "e153bc190b5f167425c576ad791b498788b052cd1a997fcf6bb396680c9f798a"
+    },
+    {
+      "path": "src/db/auth-grants.sql",
+      "sha256_lf": "d923f1134df86845c18359eabfe0c8f073dac056b4de1ddca7dd81d23a66408f"
+    },
+    {
+      "path": "src/db/auth-migrate.ts",
+      "sha256_lf": "5113fdf46e45acc2b6331ea3c8390a988a2f470f19b8ce7c5526df899904414f"
+    },
+    {
+      "path": "src/db/auth-migrations/001_better_auth.sql",
+      "sha256_lf": "39aba6ae5eb52e665fa6f384db9c30fc43fbd5f7f2b6fb2ebcfc3ae0ce501f34"
+    },
+    {
+      "path": "src/db/auth-migrations/002_account_identity.sql",
+      "sha256_lf": "8245c8f1680002627f936429682531243c52797f1fd6d4b40642ed990e646e84"
+    },
+    {
+      "path": "src/db/auth-migrations/003_session_security.sql",
+      "sha256_lf": "e6c732db55e58a121f9f3e268ac23f4726ac117bafa0149a5ed6e07f39ff5af9"
+    },
+    {
+      "path": "src/db/auth-migrations/004_password_recovery.sql",
+      "sha256_lf": "50e8b1c2b869b9fa468176a280d4adfb68023a9b5717737540cd7d39666d683a"
+    },
+    {
+      "path": "src/db/auth-migrations/005_auth_admission.sql",
+      "sha256_lf": "913a2a2adf91431e8d7e305ad281ad5b8c27a573679da2f2b4d47a6f5dce64ab"
+    },
+    {
+      "path": "src/db/auth-migrations/006_totp_challenge_security.sql",
+      "sha256_lf": "6d5d39c85ac0230f2eb99b1c5f90ae8e7b6106d43bfe43126fcbf76d950f3660"
+    },
+    {
+      "path": "src/db/migrations/001_foundation.sql",
+      "sha256_lf": "eba7bcd7aa1cb28a3e3f5a52a3eb4a31f1c2969aba84617f72012d89aafc8aff"
+    },
+    {
+      "path": "src/db/migrations/002_lease_fencing.sql",
+      "sha256_lf": "4b499d6ca5731a47c0317752d1b3fdd87e38ce88c6d1fe5b6f65a5687feef4f9"
+    },
+    {
+      "path": "src/modules/auth/admission-policy.ts",
+      "sha256_lf": "792967d37fb98fabdc17d21d8491bcc6246a24e1142df84bbff34c046bbfba1f"
+    },
+    {
+      "path": "src/modules/auth/admission.ts",
+      "sha256_lf": "a941aa3a95776caeac9007b6fe8238476461ba612e37d7f3f4fa02d1c50c64a7"
+    },
+    {
+      "path": "src/modules/auth/challenge.ts",
+      "sha256_lf": "d2fa6d9ea339e783eca54f7f9558d00bde3a16ac1952b95ace96f55df1bbebe1"
+    },
+    {
+      "path": "src/modules/auth/gate.ts",
+      "sha256_lf": "b4ac10613b8a21e03e2d2bdfa5a5fa0385fa2e944a178e78154aa613f4fbb0f1"
+    },
+    {
+      "path": "src/modules/auth/http.ts",
+      "sha256_lf": "d6e07faca78c64a10afeea7c6ed4824bd3eaeabc589aeb255f643d29f9605df4"
+    },
+    {
+      "path": "src/modules/auth/library.ts",
+      "sha256_lf": "a5d5218499cf72204e683c56eca20be6af451ee4f0ea7465b02d380b741147a0"
+    },
+    {
+      "path": "src/modules/auth/recovery-browser.ts",
+      "sha256_lf": "b7a5eea8c7ff8515d44c7ecac58ef561d35c1509de4a49f4380d6570ec8d6eec"
+    },
+    {
+      "path": "src/modules/auth/recovery-drain-cli.ts",
+      "sha256_lf": "6e055d5409e1a00e0154a767ea980fbbe18cd36045bbc39136d5a38803707a9a"
+    },
+    {
+      "path": "src/modules/auth/recovery.ts",
+      "sha256_lf": "fdb6f851ef84c5e457654decef9e50e3a3597e490a66295ad2e142092c48328b"
+    },
+    {
+      "path": "src/modules/auth/runtime.ts",
+      "sha256_lf": "1c9af5fb2a841d13d2c97fbd088ca4c9d476944058023b185e82d733acea7f21"
+    },
+    {
+      "path": "src/modules/auth/security.ts",
+      "sha256_lf": "1930a6c5a391c8b1f4fbef95c8f71d186712383df57a0a12821d59afebff5ade"
+    },
+    {
+      "path": "src/modules/onboarding/http.ts",
+      "sha256_lf": "b3ebc3bae3fb3c51a4edd80cc93a9eb131264fac82a1846563396813ab8bc48c"
+    },
+    {
+      "path": "src/modules/onboarding/service.ts",
+      "sha256_lf": "b5d02d893848f8a86a48779124d074275040ec848fd8f3f55e3b8add25028bfd"
+    },
+    {
+      "path": "tests/admission.test.ts",
+      "sha256_lf": "219b2b45a300759ae77175f98123345b0f1e512215a164e18b764f5986f82bbe"
+    },
+    {
+      "path": "tests/auth.test.ts",
+      "sha256_lf": "dd8864f9ffa358caccc16664b375f235b6bb87903535e5dc7742c232626d325a"
+    },
+    {
+      "path": "tests/fixtures/admission-observer.ts",
+      "sha256_lf": "bc3879ada3e6f580a7f923379f16a5772477c4baef91ac52fa412e6f812753e5"
+    },
+    {
+      "path": "tests/fixtures/auth-library.ts",
+      "sha256_lf": "787d813f6c4b214d122d30bf38b18be4ca6cf150ea15b00de74e52411f5a3fda"
+    },
+    {
+      "path": "tests/fixtures/auth-observer.ts",
+      "sha256_lf": "38f610d5f7d00540adcd10623fd330610829874f964a92bcf17ce3024027e823"
+    },
+    {
+      "path": "tests/fixtures/recovery-claim.ts",
+      "sha256_lf": "e0cec3d6524d0b60cc1c194a020f123ee79ec17718906ce74f519d3e1ab43c88"
+    },
+    {
+      "path": "tests/fixtures/totp-observer.ts",
+      "sha256_lf": "3e89daa661123b670680ae26e5fe778fad6b2c650a471c2747da789869f8071f"
+    },
+    {
+      "path": "tests/onboarding.test.ts",
+      "sha256_lf": "0c0236d6cd4a568dad601c1110566b7e574cc3c82fe43843d03aa5b80b3a738d"
+    },
+    {
+      "path": "tests/recovery-browser.test.ts",
+      "sha256_lf": "aa4d9dab96e356d283cded456741cb11fdb0bab93bebdc0e76de0197b6cd4176"
+    },
+    {
+      "path": "tests/recovery.test.ts",
+      "sha256_lf": "6c1566849df913d87afb526b50e1f829ea21534b99f697c59fbcfe496234a340"
+    },
+    {
+      "path": "tests/totp-lifecycle.test.ts",
+      "sha256_lf": "988167fd24f034ece2d4c257bde75c3ff483ecbb5cf51e04846fb23efa18c4fe"
+    },
+    {
+      "path": "tests/unit.test.ts",
+      "sha256_lf": "053042a59b85d7f5f698881f127fbe6cbebb169c935893cca5c4c0cd3413cbb1"
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # User flows
 
+Pending TOTP cancellation: [ADR-014](decisions/ADR-014-totp-challenge-lifecycle.md). Logout before factor completion cancels that pending login; a copied cookie cannot resume it. If completion already won, logout using the original pending cookie also revokes its resulting session. Other sessions remain independent. Uncertain logout shows retryable failure rather than success/clearing; retry is safe. Consumed/uncertain factor completion requires a fresh primary login, never automatic replay. Existing ID/EN recovery, owner/operator checks and suspended-studio restriction are unchanged; no public enrollment flow added.
+
 Local authentication admission: [ADR-013](decisions/ADR-013-shared-auth-admission.md). Login and recovery/reset/TOTP may request waiting after429; preserve current recovery input/request ID and retry manually. Recovery address-budget suppression shows the same generic accepted message regardless of eligibility and does not confirm code issuance/delivery. Aggregate limits may affect local users sharing the fallback network bucket. Successful reset, clean links/separate code, session revocation and MFA remain unchanged. No automatic retry, account-status lockout or new public enrollment flow.
 
 Read [Business rules](BUSINESS_RULES.md) for exact validation. Paths below are Snappik design paths, not routes discovered on Fastpik.

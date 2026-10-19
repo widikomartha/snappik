@@ -19,6 +19,7 @@
     "test:db": "tsx --test --test-concurrency=1 tests/database.test.ts tests/onboarding.test.ts",
     "test:smoke": "tsx scripts/smoke.ts",
     "test:auth": "tsx --test --test-concurrency=1 tests/auth.test.ts",
+    "test:totp": "tsx --test --test-concurrency=1 tests/totp-lifecycle.test.ts",
     "test:admission": "tsx --test --test-concurrency=1 tests/admission.test.ts",
     "test:admission:smoke": "tsx scripts/admission-smoke.ts",
     "test:recovery": "tsx --test --test-concurrency=1 tests/recovery.test.ts",

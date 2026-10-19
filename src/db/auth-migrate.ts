@@ -31,7 +31,7 @@ export async function migrateAuth(pool:pg.Pool,supplied?:Migration[]) {
   } finally {try{await tx.query('SELECT pg_advisory_unlock(734003)');}finally{tx.release();}}
 }
 export async function assertAuthSchema(pool:pg.Pool) {
-  const result=await pool.query(`SELECT EXISTS(SELECT 1 FROM snappik_auth.schema_migrations WHERE name='005_auth_admission.sql')
+  const result=await pool.query(`SELECT EXISTS(SELECT 1 FROM snappik_auth.schema_migrations WHERE name='006_totp_challenge_security.sql')
     AND EXISTS(SELECT 1 FROM pg_constraint WHERE conrelid='snappik_auth.account'::regclass AND conname='account_provider_subject_key') AS ready`);
   if(!result.rows[0].ready)throw new Error('AUTH_SCHEMA_NOT_READY');
 }

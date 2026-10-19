@@ -10,3 +10,5 @@ GRANT UPDATE(updated_at) ON public.users TO :"runtime_role";
 GRANT SELECT,INSERT,UPDATE,DELETE ON snappik_auth.recovery_requests,snappik_auth.password_recovery,snappik_auth.recovery_outbox TO :"runtime_role";
 GRANT SELECT,INSERT ON snappik_auth.admission_policy TO :"runtime_role";
 GRANT SELECT,INSERT,UPDATE,DELETE ON snappik_auth.admission_bucket TO :"runtime_role";
+GRANT SELECT,INSERT,DELETE ON snappik_auth.totp_challenge_security TO :"runtime_role";
+GRANT UPDATE(session_id,revoked_at) ON snappik_auth.totp_challenge_security TO :"runtime_role";
