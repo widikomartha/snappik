@@ -1,3 +1,4 @@
+import {readAdmissionPolicy} from './modules/auth/admission-policy.js';
 export function readConfig(env: Record<string,string | undefined> = process.env) {
   function integer(name: string, fallback: number, min: number, max: number) {
     const text = env[name] ?? String(fallback);
@@ -22,7 +23,7 @@ export function readConfig(env: Record<string,string | undefined> = process.env)
   }
   return {
     origin: origin.origin, databaseUrl: database.href,authMode,authInstanceId:env.AUTH_INSTANCE_ID,authSecret:env.BETTER_AUTH_SECRET,
-    recoveryKey:env.AUTH_RECOVERY_KEY,
+    recoveryKey:env.AUTH_RECOVERY_KEY,admissionPolicy:readAdmissionPolicy(env),
     poolMax: integer('DB_POOL_MAX', 5, authMode==='better-auth-local'?2:1, 20),
     concurrency: integer('WORKER_CONCURRENCY', 2, 1, 4),
     leaseSeconds: integer('JOB_LEASE_SECONDS', 120, 3, 600),

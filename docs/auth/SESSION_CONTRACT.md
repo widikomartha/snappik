@@ -1,5 +1,7 @@
 # Candidate identity and server session contract
 
+Shared local admission: [ADR-013](../decisions/ADR-013-shared-auth-admission.md), [evidence](DEC-001-ADMISSION-EVIDENCE-2026-10-19.md). Auth005 primary-DB counters cover aggregate login/recovery/reset/TOTP and normalized account/canonical challenge budgets; native HTTP/plugin and persistent TOTP locks retained. Attempts commit before credential proof, survive failure/restart and reject drift/unavailable storage. Ignore IP headers/shared-network fallback; production peer/fairness/load is not verified. Recovery subject suppression stays generic202; aggregate/other subject exhaustion429 + Retry-After, availability503. Logout unthrottled. Raw trusted library APIs remain non-public; management routes remain404. Canonical cookie handling grants no authority or MFA bypass. Prior dated shared-throttle gaps are superseded for this local slice only.
+
 Updated: 19 October 2026. DEC-001 / BL-001 remains OPEN/PARTIALLY VALIDATED. [ADR-009](../decisions/ADR-009-auth-local-hardening.md) and [hardening evidence](DEC-001-EVIDENCE-2026-10-19.md) implement/verify the opt-in local Better Auth1.7.9 adapter, account constraint and durable metadata guard; [ADR-010](../decisions/ADR-010-password-recovery-outbox.md) and [recovery evidence](DEC-001-RECOVERY-EVIDENCE-2026-10-19.md) extend local reset/outbox. Default auth remains unconfigured. Historical ADR-004/006 findings retain their scope. No production approval, external callback or real recovery delivery implied.
 
 ## Implemented local boundary

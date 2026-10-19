@@ -1,5 +1,7 @@
 # User flows
 
+Local authentication admission: [ADR-013](decisions/ADR-013-shared-auth-admission.md). Login and recovery/reset/TOTP may request waiting after429; preserve current recovery input/request ID and retry manually. Recovery address-budget suppression shows the same generic accepted message regardless of eligibility and does not confirm code issuance/delivery. Aggregate limits may affect local users sharing the fallback network bucket. Successful reset, clean links/separate code, session revocation and MFA remain unchanged. No automatic retry, account-status lockout or new public enrollment flow.
+
 Read [Business rules](BUSINESS_RULES.md) for exact validation. Paths below are Snappik design paths, not routes discovered on Fastpik.
 
 ## Local design walkthrough

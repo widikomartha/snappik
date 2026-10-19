@@ -10,7 +10,7 @@ export function LoginForm({destination}:{destination:string}) {
       const response=await fetch(challenge?'/api/auth/two-factor/verify-totp':'/api/auth/sign-in/email',{
         method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store'});
       const result=await response.json();
-      if(!response.ok){setMessage(response.status===503?'Layanan masuk belum tersedia. Silakan coba lagi.':'Tidak dapat masuk. Periksa kredensial atau kode Anda.');return;}
+      if(!response.ok){setMessage(response.status===429?'Terlalu banyak percobaan. Tunggu sebentar, lalu coba lagi.':response.status===503?'Layanan masuk belum tersedia. Silakan coba lagi.':'Tidak dapat masuk. Periksa kredensial atau kode Anda.');return;}
       if(result.two_factor_required){setChallenge(true);setMessage('Masukkan kode dari aplikasi autentikator.');}
       else window.location.assign(destination);
     }catch{setMessage('Koneksi terputus. Silakan coba lagi.');}finally{setBusy(false);}

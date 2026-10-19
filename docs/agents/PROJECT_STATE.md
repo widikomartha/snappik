@@ -1,5 +1,13 @@
 # Project state
 
+## DEC-001 shared authentication admission — 19 October 2026
+
+Commit follow-up: the user subsequently authorized a local commit of this increment. No-commit/uncommitted statements in this section and its evidence describe the pre-commit verification snapshot; inspect actual Git HEAD/status for the resulting commit. Push, deployment and external services remain unauthorized.
+
+Actual startup clean main / 7e6ba85. [ADR-013](../decisions/ADR-013-shared-auth-admission.md) and [evidence](../auth/DEC-001-ADMISSION-EVIDENCE-2026-10-19.md): reviewed additive auth005, shared PG global/account/canonical-TOTP admission and native store, bounded cleanup/capacity, safe Retry-After/generic recovery and non-throttled logout policy guard. No trusted IP headers; shared local-network fallback is deliberate and not production fairness/load proof. Existing manual code/outbox/reset/version/identity/onboarding/TOTP and old migrations retained. Two demonstrated prototype/drift gaps corrected: equivalent cookie scope rotation and wrong-key logout false success.
+
+Passed11 PG admission,10 auth,15 recovery,27 foundation/onboarding,6 unit,4 browser models, targeted operator/TOTP checks, final types/build, two built Next processes with simultaneous attempts/response loss/restarts and existing auth/default HTTP-worker smokes. Actual new browser throttle/device/provider/edge/rotation/restore/load acceptance Not run. DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress. New active [handoff](handoff-2026-10-19-DEC-001-admission.md) supersedes previous next-admission task. No commit/push/deploy/external mail/provider or existing DB reset;005 applied only to isolated test clusters. Next independent local task: copied pending TOTP challenge revocation on logout; production network/provider/operator/budget gates remain.
+
 ## DEC-001 recovery code handoff — 19 October 2026
 
 Commit follow-up: the user subsequently authorized a local commit of this increment. The no-commit/uncommitted statements below and in its evidence describe the pre-commit verification snapshot; inspect actual Git HEAD/status for the resulting commit. Push, deployment and external delivery remain unauthorized.

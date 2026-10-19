@@ -1,5 +1,7 @@
 # DEC-001 recovery code handoff — 19 October 2026
 
+Superseded for next-task guidance by the [shared admission handoff](handoff-2026-10-19-DEC-001-admission.md) and ADR-013. The dated implementation/verification below remains historical evidence.
+
 Commit follow-up: the user subsequently authorized committing this local increment. Uncommitted/no-commit statements below describe its pre-commit snapshot; actual Git HEAD/status owns the resulting commit state. No push, deployment or external delivery authorization.
 
 Status: local slice complete/ready for review; **DEC-001 OPEN/PARTIALLY VALIDATED; BL-001/003/004 In progress**. Starting actual main / `0fc60a1`, clean. Current changes uncommitted; no commit/push/deploy/external sender/provider, paid provisioning or existing database reset authorized. User's follow-up asked to continue necessary fixes, not publish.

@@ -15,7 +15,7 @@ export function authentication() {
       statement_timeout:10000,idle_in_transaction_session_timeout:15000,options:'-c search_path=snappik_auth'});
     database.on('error',()=>console.error(JSON.stringify({event:'auth_database_pool_error'})));
     instance=createAuthentication(createLibrary({database,appDatabase:getPool(),origin:config.origin,
-      instanceId:config.authInstanceId!,secret:config.authSecret!}),getPool(),config.origin,config.authInstanceId!,
+      instanceId:config.authInstanceId!,secret:config.authSecret!,admissionPolicy:config.admissionPolicy}),getPool(),config.origin,config.authInstanceId!,
       config.recoveryKey?{key:Buffer.from(config.recoveryKey,'base64url')}:undefined);
   }
   return instance;

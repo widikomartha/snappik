@@ -3,13 +3,13 @@ import {useEffect,useRef,useState,type FormEvent} from 'react';
 import {recoveryNavigation,recoveryAcknowledged,type RecoveryLocale} from '../../modules/auth/recovery-browser';
 import {recoveryText} from './strings';
 declare global {interface Window {__snappikTakeRecovery?:()=> 'request'|'invalid'|'reset'}}
-type Notice='accepted'|'success'|'invalid'|'validation'|'uncertain'|'';
+type Notice='accepted'|'success'|'invalid'|'validation'|'uncertain'|'throttled'|'';
 export function RecoveryForm({enabled,initialLocale}:{enabled:boolean;initialLocale:RecoveryLocale}) {
   const [locale,setLocale]=useState(initialLocale),[mode,setMode]=useState<'preparing'|'request'|'reset'|'success'>('preparing');
   const [busy,setBusy]=useState(false),[notice,setNotice]=useState<Notice>('');
   const [formRevision,setFormRevision]=useState(0);
   const requestId=useRef(''),sending=useRef(false),status=useRef<HTMLParagraphElement>(null),password=useRef<HTMLInputElement>(null);
-  const text=recoveryText[locale],error=['invalid','validation','uncertain'].includes(notice);
+  const text=recoveryText[locale],error=['invalid','validation','uncertain','throttled'].includes(notice);
   useEffect(()=>{
     const read=()=>{
       const parsed=window.__snappikTakeRecovery?.()??recoveryNavigation(window.location.search,window.location.hash);
@@ -34,7 +34,7 @@ export function RecoveryForm({enabled,initialLocale}:{enabled:boolean;initialLoc
         body:JSON.stringify(kind==='reset'?{token:data.get('code'),new_password:data.get('password')}:{email:data.get('email'),request_id:requestId.current})});
       let result:unknown;try{result=await response.json();}catch{setNotice('uncertain');return;}
       if(!response.ok){const code=(result as {error?:{code?:string}})?.error?.code;
-        setNotice(response.status>=500?'uncertain':code==='INVALID_OR_EXPIRED_RESET'?'invalid':'validation');return;}
+        setNotice(response.status===429?'throttled':response.status>=500?'uncertain':code==='INVALID_OR_EXPIRED_RESET'?'invalid':'validation');return;}
       if(!recoveryAcknowledged(kind,response.status,response.headers.get('content-type'),result)){setNotice('uncertain');return;}
       if(kind==='reset'){element.reset();window.history.replaceState(null,'','/recover'+(locale==='en'?'?lang=en':''));setMode('success');setNotice('success');}
       else{requestId.current='';setNotice('accepted');}

@@ -3,17 +3,23 @@ import { twoFactor } from 'better-auth/plugins';
 import {PostgresDialect} from 'kysely';
 import type pg from 'pg';
 import { attachSession } from './security.js';
+import {createAdmission} from './admission.js';
+import type {AdmissionPolicy} from './admission-policy.js';
 
 export type AuthOptions = {database:pg.Pool; appDatabase:pg.Pool; origin:string; instanceId:string; secret:string;
   // Dependency injection is server-only. Runtime never supplies OAuth or a test login endpoint.
-  plugins?:BetterAuthPlugin[]; sendVerificationEmail?:(data:{url:string;token:string})=>Promise<void>};
+  admissionPolicy?:AdmissionPolicy;plugins?:BetterAuthPlugin[]; sendVerificationEmail?:(data:{url:string;token:string})=>Promise<void>};
 export function createLibrary(options:AuthOptions) {
   const namespace=`better-auth:${options.instanceId}`;
-  return betterAuth({
+  const admission=createAdmission(options.appDatabase,options.secret,options.instanceId,options.admissionPolicy);
+  const library=betterAuth({
     appName:'Snappik',baseURL:options.origin,secret:options.secret,
     database:{dialect:new PostgresDialect({pool:options.database}),type:'postgres',schemaName:'snappik_auth',transaction:true},
     trustedOrigins:[options.origin],logger:{disabled:true},
-    advanced:{useSecureCookies:options.origin.startsWith('https:'),database:{generateId:'uuid'},cookiePrefix:'snappik-owner'},
+    advanced:{useSecureCookies:options.origin.startsWith('https:'),database:{generateId:'uuid'},cookiePrefix:'snappik-owner',
+      // Next Request exposes no authenticated socket peer. Never trust inbound IP headers.
+      ipAddress:{ipAddressHeaders:[]}},
+    rateLimit:{customStorage:{consume:admission.native}},
     session:{expiresIn:3600,disableSessionRefresh:true,cookieCache:{enabled:false}},
     emailAndPassword:{enabled:true,requireEmailVerification:true,minPasswordLength:12,maxPasswordLength:128,
       resetPasswordTokenExpiresIn:900,revokeSessionsOnPasswordReset:true},
@@ -22,4 +28,5 @@ export function createLibrary(options:AuthOptions) {
     databaseHooks:{session:{create:{after:async session=>attachSession(options.appDatabase,namespace,session.id,session.userId)}}},
     plugins:[twoFactor(),...(options.plugins??[])],
   });
+  return Object.assign(library,{admission});
 }

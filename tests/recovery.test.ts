@@ -58,14 +58,17 @@ test('additive recovery migration upgrades populated 003 without changing creden
   let previous:ReturnType<typeof testAuthentication>|undefined;
   try {
     await migrate(setup);await migrateAuth(setup,(await loadAuthMigrations()).slice(0,3));
-    previous=testAuthentication(db.connectionString);const email=address();await previous.register(email);const signed=await previous.login(email);
-    const active=await previous.auth.resolveSession(signed.request);assert.ok(active);
+    previous=testAuthentication(db.connectionString);const email=address();await previous.register(email);
+    // Seed a genuine pre-005 native session through the trusted fixture API: the
+    // current public wrapper intentionally requires admission schema005.
+    const signed=await previous.library.api.signInEmail({body:{email,password:testPassword},asResponse:true});
+    const active=await previous.auth.resolveSession(new Request(previous.origin,{headers:{cookie:cookie(signed)}}));assert.ok(active);
     await completeSetup(setup,active,{name:'Synthetic Upgrade',slug:`u-${randomUUID()}`,locale:'id',timezone:'UTC'},randomUUID());
     const tables=['snappik_auth."user"','snappik_auth.account','snappik_auth.session','public.users','public.owner_session_security','public.studios','public.entitlement_grants'];
     // Compare digests so an assertion failure cannot print raw credentials/cookies.
     const snapshot=()=>Promise.all(tables.map(async table=>(await setup.query(`SELECT md5(coalesce(jsonb_agg(to_jsonb(t) ORDER BY to_jsonb(t)::text)::text,'')) AS digest FROM ${table} t`)).rows[0].digest));
     const before=await snapshot();await migrateAuth(setup);await migrateAuth(setup);assert.deepEqual(await snapshot(),before);
-    assert.ok(await previous.auth.resolveSession(signed.request));
+    assert.ok(await previous.auth.resolveSession(new Request(previous.origin,{headers:{cookie:cookie(signed)}})));
     assert.equal((await setup.query('SELECT count(*)::int n FROM snappik_auth.recovery_outbox')).rows[0].n,0);
   }finally{await previous?.close();await setup.end();await db.server.stop();}
 });

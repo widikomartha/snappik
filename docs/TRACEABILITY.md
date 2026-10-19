@@ -1,5 +1,7 @@
 # Requirements traceability
 
+DEC-001 shared admission: [ADR-013](decisions/ADR-013-shared-auth-admission.md) / [admission evidence](auth/DEC-001-ADMISSION-EVIDENCE-2026-10-19.md): REQ-AUTH-001/REQ-REL-001 and BR-REL-001/002 → T-001/017 bounded shared attempts/retry/concurrency/restart; REQ-OPS-001/BR-OPS-001 → T-015 native TOTP and account/challenge boundaries with management routes closed; REQ-UX-001 → recovery ID/EN throttle copy/model subset. Existing session/onboarding/data rules retained. Local multi-process PG/Next evidence does not close production network/provider acceptance; BL-001/003/004 remain In progress.
+
 DEC-001 code handoff: [ADR-012](decisions/ADR-012-recovery-code-handoff.md) / [handoff evidence](auth/DEC-001-HANDOFF-EVIDENCE-2026-10-19.md) maps REQ-AUTH-001/REQ-REL-001 to T-001 code/reset/history/retry subset and REQ-UX-001 to recovery ID/EN/keyboard/responsive subset. Existing BR-TEN/ONB/OPS invariants and15 real-PG recovery/10 auth regressions preserved. Browser/manual new-flow evidence cannot close full acceptance or approve production. BL-001/003/004 remain In progress.
 
 DEC-001 [browser increment](auth/DEC-001-BROWSER-EVIDENCE-2026-10-19.md): REQ-AUTH-001/REQ-REL-001 → T-001 recovery, old-cookie denial, uncertain response/dedupe/rollback subset; REQ-UX-001 → T-016 recovery ID/EN/keyboard/focus/responsive subset.16 positive browser cases Passed; no-global-history-retention failed/open. BL-001/003/004 and DEC-001 remain incomplete; core business/persistence/provider rules unchanged.

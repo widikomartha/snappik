@@ -1,5 +1,7 @@
 # Architecture
 
+Shared local auth admission: [ADR-013](decisions/ADR-013-shared-auth-admission.md) / [admission evidence](auth/DEC-001-ADMISSION-EVIDENCE-2026-10-19.md). modules/auth/admission owns a PostgreSQL store for application global/account/challenge budgets and native customStorage.consume. Pure policy module validates bounded configuration. Short limiter transaction commits before proof work; existing credential/version/revocation fence retained. No Redis, external proxy/sender or worker scheduler. Native enable defaults/rules remain; raw server library APIs remain trusted and never mounted. Current network identity is an explicit shared fallback, not caller IP headers; all instances require the same fingerprinted key/policy. Production proxy/fairness/load and safe rollout remain gates.
+
 Status: target design with a verified provider-independent BL-003 foundation and BL-004 [app-side onboarding subset](auth/BL-004-EVIDENCE.md). Health, `/api/v1/me`, `/api/v1/onboarding` and setup/access pages exist; default auth remains unconfigured; loopback-only credential/TOTP mode and reviewed auth SQL now exist. Domain and HTTP code live under modules/onboarding; Next-specific navigation lives under app/_lib to keep the compiled worker independent of Next browser/server routing imports. BL-001/002 spikes remain isolated. Related: [ADR-001](decisions/ADR-001-modular-monolith.md), [Database](DATABASE.md), [API](API.md).
 
 ## Baseline stack and unresolved providers

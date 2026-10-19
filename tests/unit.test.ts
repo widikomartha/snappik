@@ -4,7 +4,13 @@ import { readConfig } from '../src/config.js';
 import { canonicalHash } from '../src/modules/reliability/idempotency.js';
 import { retryDelay } from '../src/modules/reliability/jobs.js';
 import { auth,drive } from '../src/adapters/providers.js';
+import {readAdmissionPolicy} from '../src/modules/auth/admission-policy.js';
 const env = {APP_ORIGIN:'http://localhost:3000',DATABASE_URL:'postgresql://synthetic:synthetic@127.0.0.1/test'};
+test('admission thresholds are bounded positive configuration; no disable or untrusted IP override exists',()=>{
+  assert.equal(readAdmissionPolicy().global.login,120);assert.equal(readConfig(env).admissionPolicy.subject.totp,5);
+  for(const value of ['0','-1','NaN','1.5','10001'])assert.throws(()=>readAdmissionPolicy({AUTH_RATE_RESET_GLOBAL:value}),/CONFIG_AUTH_RATE_RESET_GLOBAL/);
+  assert.throws(()=>readAdmissionPolicy({AUTH_RATE_WINDOW_SECONDS:'3601'}),/CONFIG_/);
+});
 test('configuration rejects missing, insecure, unsupported-provider and unbounded values without echoing secrets',() => {
   assert.equal(readConfig(env).concurrency,2);
   for (const change of [{DATABASE_URL:''},{APP_ORIGIN:'http://example.com'},{APP_ORIGIN:'https://example.com/path'},{WORKER_CONCURRENCY:'200'},{JOB_LEASE_SECONDS:'NaN'},{DB_POOL_MAX:'0'},{AUTH_MODE:'fake'},{DRIVE_MODE:'live'}]) assert.throws(() => readConfig({...env,...change}),/^Error: CONFIG_/);
