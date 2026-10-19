@@ -1,5 +1,7 @@
 # BL-001 executed evidence
 
+Current status reassessed 19 October 2026: [BL-001 acceptance checklist](BL-001-REASSESSMENT-2026-10-19.md), [active BL-001 handoff](../agents/handoff-2026-10-19-BL-001-reassessment.md). **BL-001 In progress; DEC-001 OPEN/PARTIALLY VALIDATED; ADR-015 conditionally approves direction only.** Local Next/PG durable identity, revocation, recovery, admission and TOTP lifecycle evidence now supersedes the old no-application/no-durable-storage limitations. The record below remains the **15 October historical spike**, not current implementation truth. Do not rerun it or reimplement its resolved limitations solely to reassess completion. The new checklist separates already-satisfied local criteria from retained signed callback/delivery/operator/version/config/cost gaps.
+
 15 October 2026. Local Windows/PowerShell 7.6.5, Node v24.18.0, npm 11.16.0. Starting `master` / HEAD `f669f52`; initial worktree clean under approved local execution. Read/write verified with a temporary synthetic file, then removed. Sandbox Git initially failed with worktree/permission errors; approved execution succeeded. No Git config changed.
 
 Build: uncommitted BL-001 worktree with exact [source/lockfile](../../spikes/bl001-auth/README.md). No application build, real IdP or DB. All mail/accounts/OAuth/memberships are synthetic. No listener or external auth connection.

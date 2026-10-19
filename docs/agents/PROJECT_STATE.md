@@ -1,5 +1,15 @@
 # Project state
 
+## BL-001 completion reassessment — 19 October 2026
+
+Commit follow-up: the user subsequently authorized committing the five reassessment documents locally. No-commit statements below describe the audit snapshot; actual Git history owns the resulting commit identity. No push or deployment.
+
+Audit-only against clean local main / `8360fb34e374a98b42986216b6a6501740c4b77a`. [Acceptance checklist and resolved historical findings](../auth/BL-001-REASSESSMENT-2026-10-19.md), [active BL-001 handoff](handoff-2026-10-19-BL-001-reassessment.md). **BL-001 remains In progress, not Done; DEC-001 stays OPEN/PARTIALLY VALIDATED under ADR-015.** Architecture direction/invitation-only acquisition are already approved conditionally; no repeat decision or feature work required by this audit.
+
+Verified source correspondence:49/49 closure-snapshot hashes unchanged; test inventory10+15+11+14 and4 browser models; declared/lock/installed Better Auth1.7.9. Existing local PG/Next/browser evidence reused, not rerun. Identity/session contract, durable logout/recovery, protected expiry, MFA guard and executable T-001 plan have local evidence. Signed external callback, actual delivery/operator capability, maintained-version/full-lock qualification and funded deployment/config/cost constraints remain incomplete. Full T-001/T-015/release are not claimed, and other packages' full release work is not silently added to BL-001 scope.
+
+Smallest independent next BL-001 task: controlled maintained-version/full-lock/schema-hook-limiter qualification using existing regressions; BL-003's already-defined security CI baseline remains preferred preceding work. External checks need dedicated IdP/inbox/HTTPS resources and authorization; product owner supplies custody/recovery names and budget/region. BL-004 acquisition/delivery, BL-014 operator drill, BL-015/016/017 privacy/device/host/restore/load retain existing ownership. Only documentation changed; no commit/push/deploy/install/provider action. Final audit checks are in the new handoff.
+
 ## DEC-001 conditional architecture approval — 19 October 2026
 
 Commit follow-up: the user subsequently authorized a local commit of the related TOTP lifecycle, closure audit and conditional approval worktree. No-commit/uncommitted statements below and in the dated evidence describe their pre-commit snapshots; actual Git history owns the resulting commit identity. Push/deployment/external connections remain unauthorized.
